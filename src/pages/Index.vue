@@ -32,7 +32,7 @@
         :error="receiver_email == null || sender_email == null"
         :done="step > 1"
       >
-        <FormOne @eventname="updateparent"/>
+        <FormOne @changeStep="advanceStep" @showReceiver="showReceiver"/>
       </q-step>
 
       <q-step
@@ -41,7 +41,7 @@
         icon="create_new_folder"
         :done="step > 2"
       >
-        <FormTwo :step="step"/>
+        <FormTwo @changeStep="advanceStep"/>
       </q-step>
 
       <q-step
@@ -97,8 +97,11 @@ export default ({
     }
   },
   methods: {
-    updateparent(variable) {
+    advanceStep(variable) {
         this.step = variable
+    },
+    showReceiver(variable) {
+        console.log(variable)
     }
   }
 })

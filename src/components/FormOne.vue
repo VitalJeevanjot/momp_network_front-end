@@ -40,18 +40,16 @@
 import { ref } from 'vue'
 export default {
   // name: 'ComponentName',
-  setup () {
-    const receiver_email = ref(null)
-    const sender_email = ref(null)
-
+  data () {
     return {
-      receiver_email,
-      sender_email
+      receiver_email: null,
+      sender_email: null
     }
   },
   methods: {
     onSubmit () {
-        this.$emit('eventname', 2)
+        this.$emit('changeStep', 2)
+        this.$emit('showReceiver', this.receiver_email)
       }
   }
 }
