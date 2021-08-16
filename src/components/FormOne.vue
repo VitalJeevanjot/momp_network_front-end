@@ -8,7 +8,8 @@
         rounded
         bg-color="grey-4"
         color="moipl"
-        v-model="receiver_email"
+        :model-value="receiver"
+        @update:modelValue="$emit('update:receiver', $event)"
         label="Your name *"
         hint="Name and surname"
         lazy-rules
@@ -20,14 +21,13 @@
         rounded
         bg-color="grey-4"
         color="moipl"
-        type="number"
-        v-model="sender_email"
-        label="Your age *"
+        type="text"
+        :model-value="sender"
+        @update:modelValue="$emit('update:sender', $event)"
+        label="Sender *"
         lazy-rules
-        :rules="[
-          val => val !== null && val !== '' || 'Please type your age',
-          val => val > 0 && val < 100 || 'Please type a real age'
-        ]"
+        :rules="[ val => val && val.length > 0 || 'Please type something']"
+
       />
 
         <div>
@@ -39,18 +39,15 @@
 <script>
 import { ref } from 'vue'
 export default {
-  // name: 'ComponentName',
-  data () {
-    return {
-      receiver_email: null,
-      sender_email: null
-    }
-  },
+  props: ['receiver', 'sender'],
+  emits: ['update:receiver', 'update:sender', 'changeStep'],
   methods: {
     onSubmit () {
         this.$emit('changeStep', 2)
-        this.$emit('showReceiver', this.receiver_email)
       }
+  },
+  mounted() {
+    console.log(this.$attrs)
   }
 }
 </script>

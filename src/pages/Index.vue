@@ -32,7 +32,8 @@
         :error="receiver_email == null || sender_email == null"
         :done="step > 1"
       >
-        <FormOne @changeStep="advanceStep" @showReceiver="showReceiver"/>
+        <FormOne v-model:receiver="receiver_email" v-model:sender="sender_email" @changeStep="advanceStep"/>
+
       </q-step>
 
       <q-step
@@ -92,8 +93,19 @@ export default ({
     const $q = useQuasar()
     const step = ref(1)
 
+    const asset_name = ref(null)
+    const asset_amount = ref(null)
+    const receiver_email = ref(null)
+    const sender_email = ref(null)
+    const sender_name = ref(null)
+
     return {
-      step
+      step,
+      asset_name,
+      asset_amount,
+      receiver_email,
+      sender_email,
+      sender_name,
     }
   },
   methods: {
