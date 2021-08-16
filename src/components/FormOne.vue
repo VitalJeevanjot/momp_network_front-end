@@ -45,9 +45,6 @@ export default {
     onSubmit () {
         this.$emit('changeStep', 2)
       }
-  },
-  mounted() {
-    console.log(this.$attrs)
   }
 }
 </script>
