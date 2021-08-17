@@ -32,7 +32,13 @@
         :error="receiver_email == null || sender_email == null"
         :done="step > 1"
       >
-        <FormOne v-model:receiver="receiver_email" v-model:sender="sender_email" @changeStep="advanceStep"/>
+        <FormOne 
+        v-model:receiver="receiver_email" 
+        v-model:sender="sender_email" 
+        v-model:asset_name="asset_name" 
+        @changeStep="advanceStep"
+        :options="asset_options"
+        />
 
       </q-step>
 
@@ -98,6 +104,13 @@ export default ({
     const receiver_email = ref(null)
     const sender_email = ref(null)
     const sender_name = ref(null)
+    const asset_options = ref([
+        {
+          label: 'Google',
+          value: 'Google',
+          description: 'Search engine',
+          icon: 'mail'
+        }])
 
     return {
       step,
@@ -106,6 +119,7 @@ export default ({
       receiver_email,
       sender_email,
       sender_name,
+      asset_options
     }
   },
   methods: {

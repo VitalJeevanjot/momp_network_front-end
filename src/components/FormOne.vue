@@ -3,6 +3,30 @@
       @submit="onSubmit"
       class="q-gutter-md"
     >
+
+     <q-select
+        filled
+        :model-value="asset_name"
+        @update:modelValue="$emit('update:asset_name', $event)"
+        :options="$attrs.options"
+        label="Standard"
+        color="teal"
+        clearable
+        options-selected-class="text-deep-orange"
+      >
+        <template v-slot:option="scope">
+          <q-item v-bind="scope.itemProps">
+            <q-item-section avatar>
+              <q-icon :name="scope.opt.icon" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label v-html="scope.opt.label" />
+              <q-item-label caption>{{ scope.opt.description }}</q-item-label>
+            </q-item-section>
+          </q-item>
+        </template>
+      </q-select>
+      
       <q-input
         outlined
         rounded
@@ -39,8 +63,8 @@
 <script>
 import { ref } from 'vue'
 export default {
-  props: ['receiver', 'sender'],
-  emits: ['update:receiver', 'update:sender', 'changeStep'],
+  props: ['receiver', 'sender', 'asset_name'],
+  emits: ['update:receiver', 'update:sender', 'update:asset_name', 'changeStep'],
   methods: {
     onSubmit () {
         this.$emit('changeStep', 2)
