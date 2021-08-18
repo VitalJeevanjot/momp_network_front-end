@@ -14,6 +14,7 @@
         label="Select Asset"
         color="teal"
         options-selected-class="text-moipl"
+        :rules="[ val => val && val.value.length > 0 || 'Please select something']"
       >
       <template v-slot:selected-item="scope">
           <q-icon :name="scope.opt.icon" class="q-pr-sm q-pl-sm" /> {{ scope.opt.label }}
