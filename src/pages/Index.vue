@@ -49,6 +49,7 @@
         :done="step > 2"
       >
         <FormTwo @changeStep="advanceStep"/>
+        <pre>{{assetName}}</pre>
       </q-step>
 
       <q-step
@@ -106,10 +107,10 @@ export default ({
     const sender_name = ref(null)
     const asset_options = ref([
         {
-          label: 'Google',
-          value: 'Google',
-          description: 'Search engine',
-          icon: 'mail'
+          label: '(AE) Aeternity',
+          value: 'ae_aeternity',
+          description: 'Native tokens of Aeternity',
+          icon: 'img:https://cryptologos.cc/logos/aeternity-ae-logo.svg'
         }])
 
     return {
@@ -129,6 +130,9 @@ export default ({
     showReceiver(variable) {
         console.log(variable)
     }
+  },
+  mounted () {
+    // this.asset_name.value = "ae_aeternity"
   }
 })
 </script>

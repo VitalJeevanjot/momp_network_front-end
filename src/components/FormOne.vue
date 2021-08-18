@@ -5,15 +5,19 @@
     >
 
      <q-select
-        filled
+        rounded
+        outlined
+        bg-color="grey-4"
         :model-value="asset_name"
-        @update:modelValue="$emit('update:asset_name', $event)"
+        @update:modelValue="$emit('update:asset_name', $event);"
         :options="$attrs.options"
-        label="Standard"
+        label="Select Asset"
         color="teal"
-        clearable
-        options-selected-class="text-deep-orange"
+        options-selected-class="text-moipl"
       >
+      <template v-slot:selected-item="scope">
+          <q-icon :name="scope.opt.icon" class="q-pr-sm q-pl-sm" /> {{ scope.opt.label }}
+       </template>
         <template v-slot:option="scope">
           <q-item v-bind="scope.itemProps">
             <q-item-section avatar>
