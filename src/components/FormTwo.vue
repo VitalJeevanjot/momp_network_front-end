@@ -3,26 +3,33 @@
       @submit="onSubmit"
       class="q-gutter-md"
     >
+
       <q-input
         outlined
         rounded
-        v-model="sender_name"
-        label="Your name *"
+        bg-color="grey-4"
+        color="moipl"
+        :model-value="receiver"
+        @update:modelValue="$emit('update:receiver', $event)"
+        label="Your Name/Email *"
         hint="Name and surname"
         lazy-rules
         :rules="[ val => val && val.length > 0 || 'Please type something']"
       />
 
       <q-input
-        filled
+        outlined
         rounded
+        bg-color="grey-4"
+        color="moipl"
         type="number"
-        v-model="asset_amount"
-        label="Your age *"
+        :model-value="asset_amount"
+        @update:modelValue="$emit('update:asset_amount', $event)"
+        label="Enter amount in AE *"
         lazy-rules
         :rules="[
-          val => val !== null && val !== '' || 'Please type your age',
-          val => val > 0 && val < 100 || 'Please type a real age'
+          val => val !== null && val !== '',
+          val => val > 0 || 'Please type a real amount in AE.'
         ]"
       />
 
@@ -37,17 +44,8 @@
 <script>
 import { ref } from 'vue'
 export default {
-  // name: 'ComponentName',
-  setup () {
-    const asset_name = ref(null)
-    const asset_amount = ref(null)
-    const sender_name = ref(null)
-    return {
-      asset_name,
-      asset_amount,
-      sender_name
-    }
-  },
+  props: ['receiver', 'asset_amount'],
+  emits: ['update:receiver', 'update:asset_amount', 'changeStep'],
   methods: {
     onSubmit () {
         this.$emit('changeStep', 3)

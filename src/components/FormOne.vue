@@ -31,19 +31,6 @@
           </q-item>
         </template>
       </q-select>
-      
-      <q-input
-        outlined
-        rounded
-        bg-color="grey-4"
-        color="moipl"
-        :model-value="receiver"
-        @update:modelValue="$emit('update:receiver', $event)"
-        label="Your name *"
-        hint="Name and surname"
-        lazy-rules
-        :rules="[ val => val && val.length > 0 || 'Please type something']"
-      />
 
       <q-input
         outlined
@@ -53,7 +40,7 @@
         type="text"
         :model-value="sender"
         @update:modelValue="$emit('update:sender', $event)"
-        label="Sender *"
+        label="Your Name/Email *"
         lazy-rules
         :rules="[ val => val && val.length > 0 || 'Please type something']"
 
@@ -68,8 +55,8 @@
 <script>
 import { ref } from 'vue'
 export default {
-  props: ['receiver', 'sender', 'asset_name'],
-  emits: ['update:receiver', 'update:sender', 'update:asset_name', 'changeStep'],
+  props: ['sender', 'asset_name'],
+  emits: ['update:sender', 'update:asset_name', 'changeStep'],
   methods: {
     onSubmit () {
         this.$emit('changeStep', 2)

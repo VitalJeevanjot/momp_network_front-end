@@ -21,20 +21,19 @@
       class="bg-grey-3"
       active-color="moipl"
       done-color="moipd"
-      style="width: 50rem"
+      style="width: 50rem; border-radius: 40px"
       header-nav
       animated
     >
       <q-step
         :name="1"
-        title="Receiver"
-        icon="settings"
-        :error="receiver_email == null || sender_email == null"
+        title="Sender"
+        icon="account_balance_wallet"
+        :error="!sender || !asset_name"
         :done="step > 1"
       >
         <FormOne 
-        v-model:receiver="receiver_email" 
-        v-model:sender="sender_email" 
+        v-model:sender="sender" 
         v-model:asset_name="asset_name" 
         @changeStep="advanceStep"
         :options="asset_options"
@@ -44,18 +43,23 @@
 
       <q-step
         :name="2"
-        title=""
-        icon="create_new_folder"
+        title="Receipient"
+        icon="person_pin_circle"
+        :error="!asset_amount || !receiver_email"
         :done="step > 2"
       >
-        <FormTwo @changeStep="advanceStep"/>
+        <FormTwo 
+          @changeStep="advanceStep"
+          v-model:asset_amount="asset_amount" 
+          v-model:receiver="receiver_email" 
+        />
         <pre>{{assetName}}</pre>
       </q-step>
 
       <q-step
         :name="3"
-        title="Create an ad"
-        icon="add_comment"
+        title="Confirm"
+        icon="send"
       >
         Try out different ad text to see what brings in the most customers, and learn how to
         enhance your ads using features like ad extensions. If you run into any problems with
@@ -103,8 +107,7 @@ export default ({
     const asset_name = ref(null)
     const asset_amount = ref(null)
     const receiver_email = ref(null)
-    const sender_email = ref(null)
-    const sender_name = ref(null)
+    const sender = ref(null)
     const asset_options = ref([
         {
           label: '(AE) Aeternity',
@@ -118,8 +121,7 @@ export default ({
       asset_name,
       asset_amount,
       receiver_email,
-      sender_email,
-      sender_name,
+      sender,
       asset_options
     }
   },
