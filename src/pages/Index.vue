@@ -35,6 +35,8 @@
         <FormOne 
         v-model:sender="sender" 
         v-model:asset_name="asset_name" 
+        v-model:asset_amount="asset_amount" 
+        v-model:receiver_email="receiver_email" 
         @changeStep="advanceStep"
         :options="asset_options"
         />
@@ -45,7 +47,7 @@
         :name="2"
         title="Receipient"
         icon="person_pin_circle"
-        :error="!asset_amount || !receiver_email"
+        :error="asset_amount=='' || receiver_email==''"
         :done="step > 2"
       >
         <FormTwo 
