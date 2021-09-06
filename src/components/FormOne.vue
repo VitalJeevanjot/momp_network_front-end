@@ -55,14 +55,11 @@
 <script>
 import { ref } from 'vue'
 export default {
-  props: ['sender', 'asset_name', 'asset_amount', 'receiver_email'],
-  emits: ['update:sender', 'update:asset_name', 'update:asset_amount', 'update:receiver_email', 'changeStep'],
+  props: ['sender', 'asset_name'],
+  emits: ['update:sender', 'update:asset_name', 'changeStep'],
   methods: {
     onSubmit () {
         this.$emit('changeStep', 2)
-        this.$emit('update:asset_amount', '')
-        this.$emit('update:receiver_email', '')
-
       }
   }
 }

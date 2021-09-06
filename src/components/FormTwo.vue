@@ -11,8 +11,8 @@
         color="moipl"
         :model-value="receiver"
         @update:modelValue="$emit('update:receiver', $event)"
-        label="Your Name/Email *"
-        hint="Name and surname"
+        label="Receiver Email *"
+        hint="Recipient Email"
         lazy-rules
         :rules="[ val => val && val.length > 0 || 'Please type something']"
       />
@@ -46,6 +46,13 @@ import { ref } from 'vue'
 export default {
   props: ['receiver', 'asset_amount'],
   emits: ['update:receiver', 'update:asset_amount', 'changeStep'],
+
+  mounted() {
+    if(!this.asset_amount && !this.receiver_email) {
+          this.$emit('update:asset_amount', '')
+          this.$emit('update:receiver_email', '')
+    }
+  },
   methods: {
     onSubmit () {
         this.$emit('changeStep', 3)

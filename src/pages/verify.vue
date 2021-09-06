@@ -20,32 +20,53 @@
     >
       <q-step
         :name="1"
-        title="Sender"
+        title="Public Key"
         icon="account_balance_wallet"
-        :error="!sender || !asset_name"
+        :error="!public_key"
+        @update:model-value="updatedModel"
         :done="step > 1"
       >
-        <FormOne 
-        v-model:sender="sender" 
-        v-model:asset_name="asset_name" 
-        @changeStep="advanceStep"
-        :options="asset_options"
-        />
+        
+    <q-input
+        outlined
+        rounded
+        bg-color="grey-4"
+        color="moipl"
+        type="text"
+        label="Your Public Key *"
+        v-model="public_key"
+        lazy-rules
+        :rules="[ val => val && val.length > 0 || 'Please type something']"
 
+      />
+      <div>
+          <q-btn class="q-mt-sm" type="submit" rounded color="moipd" icon-right="chevron_right" label="Continue" />
+        </div>
       </q-step>
 
       <q-step
         :name="2"
-        title="Receipient"
-        icon="person_pin_circle"
-        :error="asset_amount=='' || receiver_email==''"
+        title="Email"
+        icon="mail"
+        :error="user_email==''"
         :done="step > 2"
       >
-        <FormTwo 
-          @changeStep="advanceStep"
-          v-model:asset_amount="asset_amount" 
-          v-model:receiver="receiver_email" 
-        />
+         <q-input
+        outlined
+        rounded
+        bg-color="grey-4"
+        color="moipl"
+        type="text"
+        label="Your Public Key *"
+        v-model="user_email"
+        lazy-rules
+        :rules="[ val => val && val.length > 0 || 'Please type something']"
+
+      />
+
+      <div>
+          <q-btn class="q-mt-sm" type="submit" rounded color="moipd" icon-right="chevron_right" label="Continue" />
+        </div>
       </q-step>
 
       <q-step
@@ -61,18 +82,17 @@
       </div>
       </q-step>
     </q-stepper>
+    
   </div>
 
   <div class="row justify-center">
     <p class="text-h4 text-grey-5"> OR</p>
   </div>
   <div class="row justify-center">
-    <q-btn class="bg-grey-9 text-white" rounded label="Verify Email" to="/verify" />
+    <q-btn class="bg-grey-3 text-black" rounded label="Transmit" to="/" />
   </div>
   </q-page>
 </template>
-
-
 
 <script>
 import { useQuasar } from 'quasar'
@@ -83,37 +103,25 @@ export default ({
     const $q = useQuasar()
     const step = ref(1)
 
-    const asset_name = ref(null)
-    const asset_amount = ref(null)
-    const receiver_email = ref(null)
-    const sender = ref(null)
-    const asset_options = ref([
-        {
-          label: '(AE) Aeternity',
-          value: 'ae_aeternity',
-          description: 'Native tokens of Aeternity',
-          icon: 'img:https://cryptologos.cc/logos/aeternity-ae-logo.svg'
-        }])
+    const user_email = ref(null)
+    const public_key = ref(null)
 
     return {
-      step,
-      asset_name,
-      asset_amount,
-      receiver_email,
-      sender,
-      asset_options
+      user_email,
+      public_key,
+      step
     }
   },
   methods: {
-    advanceStep(variable) {
-        this.step = variable
+    updatedModel(event) {
+      console.log(event)
+      if(!user_email) {user_email = ''}
     },
-    showReceiver(variable) {
-        console.log(variable)
+    onSubmit () {
+      console.log("hi")
     }
   },
   mounted () {
-    // this.asset_name.value = "ae_aeternity"
   }
 })
 </script>
