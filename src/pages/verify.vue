@@ -23,25 +23,13 @@
         title="Public Key"
         icon="account_balance_wallet"
         :error="!public_key"
-        @update:model-value="updatedModel"
         :done="step > 1"
       >
         
-    <q-input
-        outlined
-        rounded
-        bg-color="grey-4"
-        color="moipl"
-        type="text"
-        label="Your Public Key *"
-        v-model="public_key"
-        lazy-rules
-        :rules="[ val => val && val.length > 0 || 'Please type something']"
-
-      />
-      <div>
-          <q-btn class="q-mt-sm" type="submit" rounded color="moipd" icon-right="chevron_right" label="Continue" />
-        </div>
+       <FormOne_verify
+        v-model:public_key="public_key" 
+        @changeStep="advanceStep"
+        />
       </q-step>
 
       <q-step
@@ -51,22 +39,11 @@
         :error="user_email==''"
         :done="step > 2"
       >
-         <q-input
-        outlined
-        rounded
-        bg-color="grey-4"
-        color="moipl"
-        type="text"
-        label="Your Public Key *"
-        v-model="user_email"
-        lazy-rules
-        :rules="[ val => val && val.length > 0 || 'Please type something']"
+         <FormTwo_verify
+        v-model:user_email="user_email" 
+        @changeStep="advanceStep"
+        />
 
-      />
-
-      <div>
-          <q-btn class="q-mt-sm" type="submit" rounded color="moipd" icon-right="chevron_right" label="Continue" />
-        </div>
       </q-step>
 
       <q-step
@@ -113,13 +90,9 @@ export default ({
     }
   },
   methods: {
-    updatedModel(event) {
-      console.log(event)
-      if(!user_email) {user_email = ''}
+    advanceStep(variable) {
+        this.step = variable
     },
-    onSubmit () {
-      console.log("hi")
-    }
   },
   mounted () {
   }

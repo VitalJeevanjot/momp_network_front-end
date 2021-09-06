@@ -107,9 +107,6 @@ export default ({
   methods: {
     advanceStep(variable) {
         this.step = variable
-    },
-    showReceiver(variable) {
-        console.log(variable)
     }
   },
   mounted () {
