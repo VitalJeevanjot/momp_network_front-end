@@ -1,0 +1,148 @@
+export default async ({ app }) => {
+  app.config.globalProperties.$contract_code = `
+include "String.aes"
+
+contract OracleConnector =
+
+    datatype event = QueryCreated(address, int, bool, string) 
+                     | OracleCreated(oracle(string, string), string)
+                     | Response(address, oracle_query(string,string), string)
+                     | EditCallBackAddress(address, bool)
+                     | EditOwnerAddress(address, bool)
+
+    record state = {
+        source_oracle : oracle(string, string),
+        reqc : map(address, int),
+        index_of_queries: int, // to read number of queries on interval
+        map_of_queries: map(int, string), // get new queries to respond to, it can be used as unique id on purpose
+        callback_addresses : map(address, bool),
+        owners: map(address, bool),
+        queries: map(string, oracle_query(string, string)), // for users to get their queries by unique id
+        query_caller: map(string, address), // get contract address of caller by unique id
+        requested_callback: map(string, bool), // get contract address of caller by unique id
+        base_fee: int,
+        ttl: int, // for oracle ttl
+        qttl: int,
+        rttl: int // for query response ttl
+     }
+
+
+    stateful entrypoint init () =
+       let oracle_created : oracle(string, string) = createOracle()
+       {source_oracle = oracle_created,
+            reqc = {},
+            index_of_queries = 0,
+            map_of_queries = {},
+            callback_addresses = {[Call.caller] = true},
+            owners = {[Call.caller] = true},
+            base_fee = 100000000000000000,
+            queries = {},
+            query_caller = {},
+            requested_callback = {},
+            ttl = 999999, 
+            qttl = 10000,
+            rttl = 10000}
+         
+    stateful entrypoint createOracle() : oracle(string, string) =
+        let oracle_created : oracle(string, string) = Oracle.register(Contract.address, 100000000000000000, RelativeTTL(999999))
+        Chain.event(OracleCreated(oracle_created, "New oracle created"))
+        oracle_created
+
+    payable stateful entrypoint query(args: string, require_callback: bool) : string =
+         // require(Address.is_contract(Call.caller), "Only a contract can call it!")
+         require(state.base_fee =< Call.value, "insufficient value for qfee") 
+         put(state{reqc[Call.caller = 0] @ reqs = reqs + 1})
+         if(require_callback == true)
+            require(Address.is_contract(Call.caller), "Only contracts are allowed to request callbacks")
+         // Required, so queries can be mapped with unique key
+         let uniq_id : string = Bytes.to_str(Crypto.sha3(String.concat(String.concat(Address.to_str(Contract.address), Address.to_str(Call.caller)), Int.to_str(state.reqc[Call.caller]))))
+         let query_created : oracle_query(string, string) = Oracle.query(state.source_oracle, args, state.base_fee, RelativeTTL(state.qttl), RelativeTTL(state.rttl))
+         put(state{queries[uniq_id] = query_created})
+         put(state{query_caller[uniq_id] = Call.caller})
+         put(state{requested_callback[uniq_id] = require_callback})
+         put(state{index_of_queries = state.index_of_queries + 1})
+         put(state{map_of_queries[state.index_of_queries] = uniq_id})
+         Chain.event(QueryCreated(Call.caller, state.index_of_queries, require_callback, args))
+         uniq_id
+         
+    public entrypoint getIndexOfQueries() : int =
+        state.index_of_queries
+      
+    public entrypoint getNumberOfMyCalls(caller_address: address) : int =
+        state.reqc[Call.caller]
+    
+    public entrypoint getQueryCallerAddress(uniq_id: string) : address =
+        state.query_caller[uniq_id]
+    
+    public entrypoint getRequestedCallBack(uniq_id: string) : bool =
+        state.requested_callback[uniq_id]
+      
+    public entrypoint getQueryUniqIdByNumber(number: int) : string =
+        state.map_of_queries[number]    
+    
+    public entrypoint getQuestionByQuery(query: oracle_query(string,string)) : string =
+        Oracle.get_question(state.source_oracle, query)
+    
+    stateful entrypoint respond(query_address: oracle_query(string,string), answer: string) : bool =
+        require(canCallBack(Call.caller), "Only owners can do this transaction")
+        Oracle.respond(state.source_oracle, query_address, answer)
+        Chain.event(Response(Call.caller, query_address, answer))
+        true
+    
+    stateful entrypoint editOwnerAddress(addr: address, it_is: bool) : bool =
+        require(state.owners[Call.caller] == true, "Only owners can do this transaction")
+        put(state{owners[addr] = it_is})
+        Chain.event(EditOwnerAddress(addr, it_is))
+        true
+
+    stateful entrypoint editCallBackAddress(addr: address, it_is: bool) : bool =
+        require(state.owners[Call.caller] == true, "Only owners can do this transaction")
+        put(state{callback_addresses[addr] = it_is})
+        Chain.event(EditCallBackAddress(addr, it_is))
+        true
+
+    public entrypoint getAnswerByQueryUniqId(query_id: string) : option(string) =
+        Oracle.get_answer(state.source_oracle, Map.lookup_default(query_id, state.queries, oq_7Cegjfke8zaYtVAhch4XswqVnyk1wCp5oUrGibkxvv5FrU9xq))
+
+    public entrypoint getAnswerByQueryAddress(query_address: oracle_query(string,string)) : option(string) =
+        Oracle.get_answer(state.source_oracle, query_address)
+
+    public entrypoint getQueryByQueryUniqId(query_id: string) : option(oracle_query(string, string)) =
+        Map.lookup(query_id, state.queries)
+        
+    
+
+    stateful entrypoint withdrawFunds(send_to: address, amount: int) : bool =
+        require(state.owners[Call.caller] == true, "Only owners can do this transaction")
+        Chain.spend(send_to, amount)
+        true
+
+    // Checks
+
+    public entrypoint getBaseFee() : int =
+        state.base_fee
+
+    public entrypoint getOracle() : oracle(string, string) =
+         state.source_oracle
+
+    public entrypoint canCallBack(caller : address) : bool =
+        if(Map.lookup(caller, state.callback_addresses) == None)
+          abort("Only accepted address can send callback")
+        state.callback_addresses[caller] == true
+
+
+    public entrypoint getCurrentContractBalance() : int =
+        Contract.balance
+    
+    // payable public stateful entrypoint acceptAssets() : int =
+    //     Contract.balance
+    
+    public entrypoint contractAddress() : address =
+        Contract.address
+
+
+// > Activate deactivate oracles.
+
+  `
+  app.config.globalProperties.$contract_address = 'ct_2r3Zn9gLJvsN8W4wD6YekPsvMrb7rESMTFLVg6QvjJpFXbph37'
+}
