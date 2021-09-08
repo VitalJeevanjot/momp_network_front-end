@@ -1,5 +1,6 @@
 export default async ({ app }) => {
   app.config.globalProperties.$contract_code = `
+
 include "String.aes"
 
 contract OracleConnector =
