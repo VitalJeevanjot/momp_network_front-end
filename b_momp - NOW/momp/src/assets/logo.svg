@@ -1,0 +1,10 @@
+<svg version="1.2" baseProfile="tiny-ps" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1500 1500" width="1500" height="1500">
+	<title>logo idea 3 (color)</title>
+	<defs>
+		<image  width="524" height="473" id="img1" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAgwAAAHZAgMAAACX84udAAAAAXNSR0IB2cksfwAAAAlQTFRFShceAAAA4rFEr0mhRgAAAAN0Uk5T/wD/aewfvgAAASJJREFUeJztzrERABAQAEGKpEOJKqWSlzGDvQJuNqVt5TLX4/YRGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBi+MJRDMTAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDDcalgU7Wq8awwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDG8aBrFQTX2mG+lzAAAAAElFTkSuQmCC"/>
+	</defs>
+	<style>
+		tspan { white-space:pre }
+	</style>
+	<use id="Background" href="#img1" x="488" y="594" />
+</svg>

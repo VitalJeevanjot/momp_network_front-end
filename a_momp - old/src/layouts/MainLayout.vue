@@ -50,8 +50,10 @@ export default ({
   methods: {
     async getOwnerOfToken() {
       console.log("starting getOwnerOfToken...")
-      var token_owner = (await this.contract.methods.ownerOfToken.get("abc")).decodedResult
+      console.log(this.contract)
+      var token_owner = await this.contract.methods.ownerOfToken.send("abc")
       console.log(token_owner)
+      console.log(token_owner.decodedResult)
     },
     async initProvider () {
       try {
@@ -61,11 +63,12 @@ export default ({
         console.log(this.network_id)
         console.log(this.$contract_address)
         let contractAddress = this.$contract_address
-        this.contract = await this.client.getContractInstance(this.$contract_code, { contractAddress })
+        this.contract = await this.client.getContractInstance(this.$contract_code, { contractAddress: "ct_2AqPgJW4TxmDskLd8Kz4kfQ5DkzmcsWtNxvVsTxvBDkXwRR88B" })
+        console.log("Instance created")
         await this.getOwnerOfToken()
         return true
       } catch (e) {
-        console.log("got error")
+        console.log("got errori...")
         console.error(e)
         return false
       }
@@ -93,7 +96,7 @@ export default ({
   async mounted () {
     console.log("Starting mounted...")
      const options = {
-        nodes: [{ name: 'node', instance: await this.$Node({ url: this.mainnet_url }) }],
+        nodes: [{ name: 'node', instance: await this.$Node({ url: this.testnet_url }) }],
         compilerUrl: this.compiler_url,
       };
       const instance = await this.$RpcAepp({

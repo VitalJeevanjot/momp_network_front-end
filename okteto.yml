@@ -1,6 +1,6 @@
 name: momp-network
 autocreate: true
-image: okteto/node:14
+image: okteto/node:12
 command: bash
 sync:
 - .:/usr/src/app
