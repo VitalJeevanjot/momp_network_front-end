@@ -48,10 +48,6 @@ export default {
   emits: ['update:receiver', 'update:asset_amount', 'changeStep'],
 
   mounted() {
-    if(!this.asset_amount && !this.receiver_email) {
-          this.$emit('update:asset_amount', '')
-          this.$emit('update:receiver_email', '')
-    }
   },
   methods: {
     onSubmit () {

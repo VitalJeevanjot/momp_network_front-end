@@ -36,12 +36,13 @@
         :name="2"
         title="Email"
         icon="mail"
-        :error="user_email==''"
+        :error="!user_email"
         :done="step > 2"
       >
          <FormTwo_verify
         v-model:user_email="user_email" 
         @changeStep="advanceStep"
+        @registerAndAdvanceStep="register_and_advance_step"
         />
 
       </q-step>
@@ -51,12 +52,11 @@
         title="Confirm"
         icon="send"
       >
-        Try out different ad text to see what brings in the most customers, and learn how to
-        enhance your ads using features like ad extensions. If you run into any problems with
-        your ads, find out how to tell if they're running and how to resolve approval issues.
-      <div>
-          <q-btn v-if="step > 1" rounded @click="$refs.stepper.previous()" icon="chevron_left" flat class="q-mr-sm" />
-      </div>
+        <FormThree_verify
+        v-model:otp_original="otp_original" 
+        @register_verify="registerUser"
+        @changeStep="advanceStep"
+        />
       </q-step>
     </q-stepper>
     
@@ -66,7 +66,7 @@
     <p class="text-h4 text-grey-5"> OR</p>
   </div>
   <div class="row justify-center">
-    <q-btn class="bg-grey-3 text-black" rounded label="Transmit" to="/" />
+    <q-btn class="bg-grey-3 text-black" rounded label="Send Asset" to="/" />
   </div>
   </q-page>
 </template>
@@ -77,13 +77,14 @@ import { ref } from 'vue'
 export default ({
   name: 'PageIndex',
   setup () {
-    const $q = useQuasar()
     const step = ref(1)
 
+    const otp_original = ref(null)
     const user_email = ref(null)
     const public_key = ref(null)
 
     return {
+      otp_original,
       user_email,
       public_key,
       step
@@ -93,8 +94,134 @@ export default ({
     advanceStep(variable) {
         this.step = variable
     },
+    async register_and_advance_step(variable) {
+      
+      if(!window.$address) {
+        this.$q.notify({
+          message: 'Required: Wallet approval',
+          color: 'red'
+        })
+        this.$q.notify({
+          message: 'Try Again: Reload page',
+          color: 'red'
+        })
+        return
+      }
+      if(!this.public_key) {
+        this.$q.notify({
+          message: 'Required: Public key',
+          color: 'red'
+        })
+        return
+      }
+
+      if(!window.$registration_fee || !window.$base_fee) {
+        this.$q.notify({
+          message: 'Loading Data! Try again in 10-20 seconds...',
+          color: 'secondary'
+        })
+        return
+      }
+      console.log("Registration fee is: " + window.$registration_fee)
+      console.log("Base fee is: " + window.$base_fee)
+
+      this.$q.loading.show({
+        message: 'Check registration fee status...',
+        boxClass: 'bg-grey-2 text-grey-9',
+        spinnerColor: 'primary'
+      })
+      const encoder = new window.TextEncoder();
+      const data = encoder.encode(this.user_email);
+      let hashed_email = await window.crypto.subtle.digest('SHA-256', data);
+      let to_hex = window.Array.from(new Uint8Array(hashed_email)).map(b => b.toString(16).padStart(2, '0')).join('')
+      var fee_status = null
+      try {
+        fee_status = await window.$contract.methods.get_registration_fee_paid_or_not(to_hex)
+      } catch(e) {
+        console.log(e)
+        this.$q.notify({
+          message: '0001: ' + e.message,
+          color: 'warning'
+        })
+        if(e.message == 'Invocation failed: "Maps: Key does not exist"') {
+          this.$q.loading.show({
+            message: 'Paying registration fee...',
+            boxClass: 'bg-grey-2 text-grey-9',
+            spinnerColor: 'primary'
+          })
+          try {
+            let pay_registration_fee = await window.$contract.methods.pay_registration_fee.send(to_hex, { amount: window.$registration_fee })
+            console.log(pay_registration_fee.decodedResult)
+          } catch (e) {
+            console.log(e)
+            this.$q.notify({
+              message: '0003: ' + e.message,
+              color: 'red'
+            })
+          }
+          
+          this.$q.loading.show({
+            message: 'Check registration fee status again...',
+            boxClass: 'bg-grey-2 text-grey-9',
+            spinnerColor: 'mompd'
+          })
+          try {
+            fee_status = await window.$contract.methods.get_registration_fee_paid_or_not(to_hex)
+            if(fee_status.decodedResult == true) {
+              console.log("Fee Now seems to be paid, right ? : ")
+              console.log(fee_status.decodedResult)
+              this.send_data_to_backend()
+            } else {
+              this.$q.notify({
+              message: 'i003: Registration fee not paid!',
+              color: 'red'
+            })
+            }
+          } catch (e) {
+            console.log(e)
+            this.$q.notify({
+              message: '0005: ' + e.message,
+              color: 'red'
+            })
+          }
+          console.log("inside if...")
+        }
+        this.$q.loading.hide()
+        return
+      }
+
+      console.log("Fee seems to be paid, right ? : ")
+      console.log(fee_status.decodedResult)
+      this.send_data_to_backend()
+      this.$q.loading.hide()
+    },
+    send_data_to_backend() {
+      this.$axios({
+        method: 'post',
+        url: 'http://localhost:8081/register',
+        data: {
+          user_email: this.user_email,
+          public_key: this.public_key
+        }
+      }).then(function (response) {
+        // handle success
+        console.log(response);
+      })
+      .catch(function (error) {
+        // handle error
+        console.log(error);
+      })
+    },
+    verify_user() {
+      
+    },
   },
   mounted () {
+    this.$q.loading.show({
+            message: 'Check registration fee status again...',
+            boxClass: 'bg-grey-2 text-grey-9',
+            spinnerColor: '#4A171E'
+      })
   }
 })
 </script>

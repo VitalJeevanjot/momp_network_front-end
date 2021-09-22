@@ -17,4 +17,10 @@ export default async ({ app }) => {
   app.config.globalProperties.$RpcAepp = RpcAepp
   app.config.globalProperties.$Node = Node
   app.config.globalProperties.$Universal = Universal
+
+  app.config.globalProperties.$client = null
+  app.config.globalProperties.$contract = null
+  app.config.globalProperties.$testnet_url = 'https://testnet.aeternity.io'
+  app.config.globalProperties.$mainnet_url = 'https://mainnet.aeternity.io'
+  app.config.globalProperties.$compiler_url = 'https://latest.compiler.aepps.com'
 }

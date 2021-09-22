@@ -38,7 +38,7 @@
         :name="2"
         title="Receipient"
         icon="person_pin_circle"
-        :error="asset_amount=='' || receiver_email==''"
+        :error="!asset_amount || !receiver_email"
         :done="step > 2"
       >
         <FormTwo 

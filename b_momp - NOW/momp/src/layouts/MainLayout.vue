@@ -9,6 +9,9 @@
       style="width: 15rem; height: 15rem"
     >
     </div>
+    <div class="row justify-center">
+    <p class="text-h6 text-red">{{this.testnet}}</p> 
+    </div>
       <router-view />
     </q-page-container>
   </q-layout>
@@ -37,35 +40,55 @@ export default ({
   },
   data () {
     return {
-      client: null,
-      contract: null,
-      testnet_url: 'https://testnet.aeternity.io',
-      mainnet_url: 'https://mainnet.aeternity.io',
-      compiler_url: 'https://latest.compiler.aepps.com',
+      testnet: null
     }
   },
   setup () {
 
   },
   methods: {
-    async getOwnerOfToken() {
-      console.log("starting getOwnerOfToken...")
-      console.log(this.contract)
-      var token_owner = await this.contract.methods.ownerOfToken.get("abc")
-      console.log(token_owner)
-      console.log(token_owner.decodedResult)
+    async getFees() {
+      // console.log("starting getFees...")
+      // console.log(window.$contract)
+      try {
+        let base_fee = await window.$contract.methods.get_base_fee()
+        window.$base_fee = base_fee.decodedResult
+        let registration_fee = await window.$contract.methods.get_registration_fee()
+        window.$registration_fee = registration_fee.decodedResult
+        this.$q.notify({
+          message: 'Data loaded!',
+          color: 'grey-10'
+        })
+      } catch (e) {
+        console.log(e)
+        this.$q.notify({
+          message: 's1: ' + e.message,
+          color: 'red'
+        })
+        this.$q.notify({
+          message: 's1.1: Error while fetching data...',
+          color: 'red'
+        })
+      }
+      // console.log(base_fee)
+      
+      console.log(window.$base_fee)
+      console.log(window.$registration_fee)
     },
     async initProvider () {
       try {
         console.log("Starting init provider...")
-        const networkId = (await this.client.getNodeInfo()).nodeNetworkId
-        this.network_id = networkId
-        console.log(this.network_id)
+        const networkId = (await window.$client.getNodeInfo()).nodeNetworkId
+        this.$network_id = networkId
+        console.log(this.$network_id)
+        // if(this.$network_id != "ae_mainnet") {
+        //   this.testnet = "Wrong network!"
+        // }
         console.log(this.$contract_address)
         let _contractAddress = this.$contract_address
-        this.contract = await this.client.getContractInstance(this.$contract_code, { contractAddress: _contractAddress })
+        window.$contract = await window.$client.getContractInstance(this.$contract_code, { contractAddress: _contractAddress })
         console.log("Instance created")
-        await this.getOwnerOfToken()
+        await this.getFees()
         return true
       } catch (e) {
         console.log("got errori...")
@@ -82,13 +105,11 @@ export default ({
 
     detector.scan(async ({ newWallet }) => {
         if (!newWallet) return;
-        await this.client.connectToWallet(await newWallet.getConnection());
-        await this.client.subscribeAddress('subscribe', 'current');
-        const address = this.client.rpcClient.getCurrentAccount();
+        await window.$client.connectToWallet(await newWallet.getConnection());
+        await window.$client.subscribeAddress('subscribe', 'current');
+        window.$address = window.$client.rpcClient.getCurrentAccount();
         console.log("wallet-address")
-        console.log(address)
-        if (!address) return;
-        console.log(this.client)
+        console.log(window.$address)
         this.initProvider()
       })
     }
@@ -96,8 +117,8 @@ export default ({
   async mounted () {
     console.log("Starting mounted...")
      const options = {
-        nodes: [{ name: 'node', instance: await this.$Node({ url: this.testnet_url }) }],
-        compilerUrl: this.compiler_url,
+        nodes: [{ name: 'node', instance: await this.$Node({ url: this.$testnet_url }) }],
+        compilerUrl: this.$compiler_url,
       };
       const instance = await this.$RpcAepp({
           ...options,
@@ -110,7 +131,7 @@ export default ({
             console.log(address)
           },
       })
-    this.client = instance
+    window.$client = instance
     this.scanForWallets()
   }
 })

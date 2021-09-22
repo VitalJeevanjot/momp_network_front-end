@@ -28,16 +28,13 @@
 import { ref } from 'vue'
 export default {
   props: ['user_email'],
-  emits: ['update:user_email', 'changeStep'],
+  emits: ['update:user_email', 'changeStep', 'registerAndAdvanceStep'],
 
   mounted() {
-    if(!this.user_email) {
-          this.$emit('update:user_email', '')
-    }
   },
   methods: {
     onSubmit () {
-        this.$emit('changeStep', 3)
+        this.$emit('registerAndAdvanceStep', 3)
       }
   }
 }
