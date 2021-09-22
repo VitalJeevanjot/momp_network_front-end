@@ -353,5 +353,5 @@ payable main contract Momp =
     public entrypoint get_smtp_connector_base_fee() : int =
         Say.getBaseFee()
   `
-  app.config.globalProperties.$contract_address = 'ct_2dWxfsRzDRDDeeoame4wiwuQDSwRZLrs8Wq91EjrGrdFu59yro'
+  app.config.globalProperties.$contract_address = 'ct_2dBjQ5mHk3PnTbZaJKm2tiRSwujcZJZ7n5NH5tLabX7ouUJgyd'
 }

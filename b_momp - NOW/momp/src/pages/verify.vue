@@ -176,15 +176,18 @@ export default ({
               color: 'secondary'
             })
             this.step = variable
+
+            window.$verify = 'first'
+            this.$q.loading.hide()
+            return
           } else {
             this.$q.notify({
-              message: 'Public address is not matching from smart contract.',
-              color: 'warning'
+              message: 'Updating your new public address in the smart contract.',
+              color: 'secondary'
             })
+            window.$verify = 'new'
           }
-          window.$verify = 'first'
-          this.$q.loading.hide()
-          return
+          
         }
       } catch(e) {
         console.log('not registered it...')
@@ -281,14 +284,19 @@ export default ({
         // handle success
         if(response.data.split(':')[0] == 'ok') {
           this.step = 3
-          this.$q.notify({
-            message: 'Successfully Registered!',
-            color: 'amber-7'
-          })
-          this.$q.notify({
-            message: 'The OTP is sent!. It is only allowed once per addition!',
-            color: 'secondary'
-          })
+          setTimeout(() => {
+            this.$q.notify({
+              message: 'Successfully Registered!',
+              color: 'amber-7'
+            })
+          }, 10000)
+
+          setTimeout(() => {
+            this.$q.notify({
+              message: 'The OTP is sent!. It is only allowed once per addition!',
+              color: 'secondary'
+            })
+          }, 15000)
         } else {
           this.$q.notify({
             message: response.data,
@@ -308,14 +316,14 @@ export default ({
       })
     },
     async verify_user() {
-      try {
-        console.log("verify OTP")
-        console.log(window.$to_hex, this.otp_original)
-        let verification_test = await window.$contract.methods.test_otp_creation(window.$to_hex, this.otp_original)
-        console.log(verification_test.decodedResult)
-      } catch (e) {
-        console.log(e)
-      }
+      // try {
+      //   console.log("verify OTP")
+      //   console.log(window.$to_hex, this.otp_original)
+      //   let verification_test = await window.$contract.methods.test_otp_creation(window.$to_hex, this.otp_original)
+      //   console.log(verification_test.decodedResult)
+      // } catch (e) {
+      //   console.log(e)
+      // }
       if(!this.user_email) {
         this.$q.notify({
           message: 'Required Email & Public key! Add it on previous step!',
@@ -339,11 +347,13 @@ export default ({
         }
 
         console.log("Verification status! : " + verification_status.decodedResult)
-
-        this.$q.notify({
-          message: 'Verification status: ' + verification_status.decodedResult,
-          color: 'amber-7'
-        })
+        setTimeout(() => {
+          this.$q.notify({
+            progress: true,
+            message: 'Verification status: ' + verification_status.decodedResult,
+            color: 'amber-7'
+          })
+        }, 20000)
         
       } catch (e) {
         console.log(e)
@@ -362,6 +372,9 @@ export default ({
       this.$q.loading.hide()
       return
     },
+    async withdraw_amount() {
+
+    }
     
   },
   mounted () {
