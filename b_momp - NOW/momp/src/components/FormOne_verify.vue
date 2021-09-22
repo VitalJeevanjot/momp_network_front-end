@@ -12,7 +12,7 @@
         type="text"
         :model-value="public_key"
         @update:modelValue="$emit('update:public_key', $event)"
-        label="Your Public Key *"
+        label="Public Key for verification*"
         lazy-rules
         :rules="[ val => val && val.length > 0 || 'Please type something']"
       />

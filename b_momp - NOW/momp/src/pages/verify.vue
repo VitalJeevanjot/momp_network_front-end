@@ -82,11 +82,13 @@ export default ({
     const otp_original = ref(null)
     const user_email = ref(null)
     const public_key = ref(null)
+    const verify = ref(null)
 
     return {
       otp_original,
       user_email,
       public_key,
+      verify,
       step
     }
   },
@@ -99,18 +101,19 @@ export default ({
       if(!window.$address) {
         this.$q.notify({
           message: 'Required: Wallet approval',
-          color: 'red'
+          color: 'pink-10'
         })
         this.$q.notify({
-          message: 'Try Again: Reload page',
-          color: 'red'
+          message: 'Try Again: Reload page or check wallet extension.',
+          color: 'pink-10'
         })
         return
       }
+
       if(!this.public_key) {
         this.$q.notify({
           message: 'Required: Public key',
-          color: 'red'
+          color: 'pink-10'
         })
         return
       }
@@ -125,15 +128,61 @@ export default ({
       console.log("Registration fee is: " + window.$registration_fee)
       console.log("Base fee is: " + window.$base_fee)
 
+
       this.$q.loading.show({
-        message: 'Check registration fee status...',
+        message: 'Checking existing keys. Do not close this tab.',
         boxClass: 'bg-grey-2 text-grey-9',
-        spinnerColor: 'primary'
+        spinnerColor: 'amber-7'
       })
+
       const encoder = new window.TextEncoder();
       const data = encoder.encode(this.user_email);
       let hashed_email = await window.crypto.subtle.digest('SHA-256', data);
       let to_hex = window.Array.from(new Uint8Array(hashed_email)).map(b => b.toString(16).padStart(2, '0')).join('')
+
+
+      this.$q.loading.show({
+        message: 'Checking account status. Do not close this tab.',
+        boxClass: 'bg-grey-2 text-grey-9',
+        spinnerColor: 'amber-7'
+      })
+
+      try {
+        try {
+          let _account_status = await window.$contract.methods.clients_new_pub_key(to_hex)
+          if(_account_status.decodedResult) {
+            this.$q.notify({
+              message: 'Next step: Verify your updation.',
+              color: 'secondary'
+            })
+            this.verify = 'new'
+            this.step = variable
+          }
+        } catch (e) {
+          console.log('registered if')
+          console.log(e)
+          let account_status = await window.$contract.methods.clients_pub_key(to_hex)
+          if(account_status.decodedResult) {
+            this.$q.notify({
+              message: 'Next step: Verification.',
+              color: 'secondary'
+            })
+            this.verify = 'new'
+            this.step = variable
+          }
+        }
+      } catch(e) {
+        console.log('not registered it...')
+        console.log(e)
+      }
+
+
+      this.$q.loading.show({
+        message: 'Check registration fee status. Do not close this tab.',
+        boxClass: 'bg-grey-2 text-grey-9',
+        spinnerColor: 'amber-7'
+      })
+      
       var fee_status = null
       try {
         fee_status = await window.$contract.methods.get_registration_fee_paid_or_not(to_hex)
@@ -145,9 +194,9 @@ export default ({
         })
         if(e.message == 'Invocation failed: "Maps: Key does not exist"') {
           this.$q.loading.show({
-            message: 'Paying registration fee...',
+            message: 'Paying registration fee. Do not close this tab.',
             boxClass: 'bg-grey-2 text-grey-9',
-            spinnerColor: 'primary'
+            spinnerColor: 'amber-7'
           })
           try {
             let pay_registration_fee = await window.$contract.methods.pay_registration_fee.send(to_hex, { amount: window.$registration_fee })
@@ -156,14 +205,14 @@ export default ({
             console.log(e)
             this.$q.notify({
               message: '0003: ' + e.message,
-              color: 'red'
+              color: 'pink-10'
             })
           }
           
           this.$q.loading.show({
-            message: 'Check registration fee status again...',
+            message: 'Check registration fee status again. Do not close this tab.',
             boxClass: 'bg-grey-2 text-grey-9',
-            spinnerColor: 'mompd'
+            spinnerColor: 'amber-7'
           })
           try {
             fee_status = await window.$contract.methods.get_registration_fee_paid_or_not(to_hex)
@@ -174,14 +223,14 @@ export default ({
             } else {
               this.$q.notify({
               message: 'i003: Registration fee not paid!',
-              color: 'red'
+              color: 'pink-10'
             })
             }
           } catch (e) {
             console.log(e)
             this.$q.notify({
-              message: '0005: ' + e.message,
-              color: 'red'
+              message: '0005: Registration fee not paid!',
+              color: 'pink-10'
             })
           }
           console.log("inside if...")
@@ -196,6 +245,11 @@ export default ({
       this.$q.loading.hide()
     },
     send_data_to_backend() {
+      this.$q.loading.show({
+        message: 'Performing email registration. Do not close this tab.',
+        boxClass: 'bg-grey-2 text-grey-9',
+        spinnerColor: 'amber-7'
+      })
       this.$axios({
         method: 'post',
         url: 'http://localhost:8081/register',
@@ -205,10 +259,12 @@ export default ({
         }
       }).then(function (response) {
         // handle success
+        this.$q.loading.hide()
         console.log(response);
       })
       .catch(function (error) {
         // handle error
+        this.$q.loading.hide()
         console.log(error);
       })
     },
@@ -217,11 +273,7 @@ export default ({
     },
   },
   mounted () {
-    this.$q.loading.show({
-            message: 'Check registration fee status again...',
-            boxClass: 'bg-grey-2 text-grey-9',
-            spinnerColor: '#4A171E'
-      })
+
   }
 })
 </script>

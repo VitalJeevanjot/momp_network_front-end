@@ -11,7 +11,7 @@
         type="text"
         :model-value="user_email"
         @update:modelValue="$emit('update:user_email', $event)"
-        label="Your Email *"
+        label="Email for verification*"
         lazy-rules
         :rules="[ val => val && val.length > 0 || 'Please type something']"
       />

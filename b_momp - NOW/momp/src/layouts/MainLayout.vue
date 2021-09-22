@@ -56,18 +56,18 @@ export default ({
         let registration_fee = await window.$contract.methods.get_registration_fee()
         window.$registration_fee = registration_fee.decodedResult
         this.$q.notify({
-          message: 'Data loaded!',
+          message: 'Data Loaded!',
           color: 'grey-10'
         })
       } catch (e) {
         console.log(e)
         this.$q.notify({
           message: 's1: ' + e.message,
-          color: 'red'
+          color: 'pink-8'
         })
         this.$q.notify({
           message: 's1.1: Error while fetching data...',
-          color: 'red'
+          color: 'pink-10'
         })
       }
       // console.log(base_fee)

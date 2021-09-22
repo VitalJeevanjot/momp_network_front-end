@@ -1,6 +1,6 @@
 export default async ({ app }) => {
-  app.config.globalProperties.$contract_code = `
-contract interface OracleConnector =
+  app.config.globalProperties.$contract_code = 
+  `contract interface OracleConnector =
     payable entrypoint query : (string, bool) => string
     entrypoint getAnswer : (bytes(32)) => option(string)
     entrypoint canCallBack: () => bool
@@ -206,6 +206,12 @@ payable main contract Momp =
         else
             false
 
+    public entrypoint isEditedVerifiedEmail(email_to : bytes(32)) : bool =
+        if(Map.lookup_default(Map.lookup_default(email_to, state.edited_email_to_otp, #000000000000000000000000000000000000000000000000000000000000000), state.new_otp_verified, false) == true)
+            true
+        else
+            false
+
     stateful entrypoint claim_refund(payment_id: string) : string =
         require(state.payment_id_expiry[payment_id][Call.caller] < Chain.timestamp, "Transaction not expired yet!")
         let get_receiver = state.payment_id_to_receiver[payment_id]
@@ -234,6 +240,9 @@ payable main contract Momp =
     
     public entrypoint clients_pub_key(email: bytes(32)): address =
         state.email_to_public_addresses[email]
+
+    public entrypoint clients_new_pub_key(email: bytes(32)): address =
+        state.edited_email_to_public_addresses[email]
     
     stateful entrypoint clients_withdraw(email_address: bytes(32)) : int =
         require(isVerifiedEmail(email_address), "023: Email not verified!")
@@ -344,5 +353,5 @@ payable main contract Momp =
     public entrypoint get_smtp_connector_base_fee() : int =
         Say.getBaseFee()
   `
-  app.config.globalProperties.$contract_address = 'ct_2Whz6XTPTigDPAB8R2sHjuv5hXRgPCDP1ioBAvt5SbFzeH2424'
+  app.config.globalProperties.$contract_address = 'ct_VnJzXnApvvQQ7aepPdAUNgxXokY6fzvyeghFyYubnPnjreMW8'
 }
