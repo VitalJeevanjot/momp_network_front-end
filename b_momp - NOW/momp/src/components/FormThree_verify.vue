@@ -39,7 +39,7 @@ export default {
   },
   methods: {
     onSubmit () {
-        this.$emit('register_verify')
+        this.$emit('verifyUser')
       }
   }
 }

@@ -54,8 +54,8 @@
       >
         <FormThree_verify
         v-model:otp_original="otp_original" 
-        @register_verify="registerUser"
         @changeStep="advanceStep"
+        @verifyUser="verify_user"
         />
       </q-step>
     </q-stepper>
@@ -136,7 +136,7 @@ export default ({
       const encoder = new window.TextEncoder();
       const data = encoder.encode(this.user_email);
       let hashed_email = await window.crypto.subtle.digest('SHA-256', data);
-      let to_hex = window.Array.from(new Uint8Array(hashed_email)).map(b => b.toString(16).padStart(2, '0')).join('')
+      window.$to_hex = window.Array.from(new Uint8Array(hashed_email)).map(b => b.toString(16).padStart(2, '0')).join('')
 
 
       this.$q.loading.show({
@@ -147,7 +147,7 @@ export default ({
 
       try {
         try {
-          let _account_status = await window.$contract.methods.clients_new_pub_key(to_hex)
+          let _account_status = await window.$contract.methods.clients_new_pub_key(window.$to_hex)
           if(_account_status.decodedResult == this.public_key) {
             this.$q.notify({
               message: 'Next step: Verify your updation.',
@@ -155,31 +155,36 @@ export default ({
             })
             window.$verify = 'new'
             this.step = variable
-          } else {
-            this.$q.notify({
-              message: 'Check your public address.',
-              color: 'warning'
-            })
+
+            this.$q.loading.hide()
             return
+          } else {
+            window.$verify = 'new'
+            this.$q.notify({
+              message: 'Updating your new public address in the smart contract.',
+              color: 'secondary'
+            })
           }
+         
         } catch (e) {
           console.log('registered if')
           console.log(e)
-          let account_status = await window.$contract.methods.clients_pub_key(to_hex)
+          let account_status = await window.$contract.methods.clients_pub_key(window.$to_hex)
           if(account_status.decodedResult == this.public_key) {
             this.$q.notify({
               message: 'Next step: Verification.',
               color: 'secondary'
             })
-            window.$verify = 'new'
             this.step = variable
           } else {
             this.$q.notify({
-              message: 'Check your public address.',
+              message: 'Public address is not matching from smart contract.',
               color: 'warning'
             })
-            return
           }
+          window.$verify = 'first'
+          this.$q.loading.hide()
+          return
         }
       } catch(e) {
         console.log('not registered it...')
@@ -195,11 +200,11 @@ export default ({
       
       var fee_status = null
       try {
-        fee_status = await window.$contract.methods.get_registration_fee_paid_or_not(to_hex)
+        fee_status = await window.$contract.methods.get_registration_fee_paid_or_not(window.$to_hex)
       } catch(e) {
         console.log(e)
         this.$q.notify({
-          message: '0001: ' + e.message,
+          message: '0001: Paying registration fee',
           color: 'warning'
         })
         if(e.message == 'Invocation failed: "Maps: Key does not exist"') {
@@ -209,7 +214,7 @@ export default ({
             spinnerColor: 'amber-7'
           })
           try {
-            let pay_registration_fee = await window.$contract.methods.pay_registration_fee.send(to_hex, { amount: window.$registration_fee })
+            let pay_registration_fee = await window.$contract.methods.pay_registration_fee.send(window.$to_hex, { amount: window.$registration_fee, gasPrice: 2500000000 })
             console.log(pay_registration_fee.decodedResult)
           } catch (e) {
             console.log(e)
@@ -217,6 +222,8 @@ export default ({
               message: '0003: ' + e.message,
               color: 'pink-10'
             })
+            this.$q.loading.hide()
+            return
           }
           
           this.$q.loading.show({
@@ -225,7 +232,7 @@ export default ({
             spinnerColor: 'amber-7'
           })
           try {
-            fee_status = await window.$contract.methods.get_registration_fee_paid_or_not(to_hex)
+            fee_status = await window.$contract.methods.get_registration_fee_paid_or_not(window.$to_hex)
             if(fee_status.decodedResult == true) {
               console.log("Fee Now seems to be paid, right ? : ")
               console.log(fee_status.decodedResult)
@@ -235,6 +242,8 @@ export default ({
               message: 'i003: Registration fee not paid!',
               color: 'pink-10'
             })
+            this.$q.loading.hide()
+            return
             }
           } catch (e) {
             console.log(e)
@@ -246,6 +255,7 @@ export default ({
           console.log("inside if...")
         }
         this.$q.loading.hide()
+        this.send_data_to_backend()
         return
       }
 
@@ -269,7 +279,22 @@ export default ({
         }
       }).then((response) => {
         // handle success
-        console.log(response);
+        if(response.data.split(':')[0] == 'ok') {
+          this.step = 3
+          this.$q.notify({
+            message: 'Successfully Registered!',
+            color: 'amber-7'
+          })
+          this.$q.notify({
+            message: 'The OTP is sent!. It is only allowed once per addition!',
+            color: 'secondary'
+          })
+        } else {
+          this.$q.notify({
+            message: response.data,
+            color: 'pink-10'
+          })
+        }
         this.$q.loading.hide()
       })
       .catch((error) => {
@@ -282,9 +307,62 @@ export default ({
         this.$q.loading.hide()
       })
     },
-    verify_user() {
-      
+    async verify_user() {
+      try {
+        console.log("verify OTP")
+        console.log(window.$to_hex, this.otp_original)
+        let verification_test = await window.$contract.methods.test_otp_creation(window.$to_hex, this.otp_original)
+        console.log(verification_test.decodedResult)
+      } catch (e) {
+        console.log(e)
+      }
+      if(!this.user_email) {
+        this.$q.notify({
+          message: 'Required Email & Public key! Add it on previous step!',
+          color: 'pink-10'
+        })
+      }
+      this.$q.loading.show({
+        message: 'Verification is in process! Do not close this tab.',
+        boxClass: 'bg-grey-2 text-grey-9',
+        spinnerColor: 'amber-7'
+      })
+      let verification_status = null
+      try {
+        if(window.$verify == 'new') {
+          console.log("2nd Time verification!")
+          verification_status = await window.$contract.methods.verify_and_edit_email_with_otp(window.$to_hex, this.otp_original, {gasPrice: 2500000000})
+        }
+        else if(window.$verify == 'first') {
+          console.log("First Time verification!")
+          verification_status = await window.$contract.methods.verify_otp(window.$to_hex, this.otp_original, {gasPrice: 2500000000})
+        }
+
+        console.log("Verification status! : " + verification_status.decodedResult)
+
+        this.$q.notify({
+          message: 'Verification status: ' + verification_status.decodedResult,
+          color: 'amber-7'
+        })
+        
+      } catch (e) {
+        console.log(e)
+        if(e.message == "Cannot read properties of null (reading 'decodedResult')") {
+          this.$q.notify({
+            message: 'v00098: Required all fields and step by step execution!',
+            color: 'pink-10'
+          })
+        } else {
+          this.$q.notify({
+            message: 'v00099: ' + e.message,
+            color: 'pink-10'
+          })
+        }
+      }
+      this.$q.loading.hide()
+      return
     },
+    
   },
   mounted () {
 
