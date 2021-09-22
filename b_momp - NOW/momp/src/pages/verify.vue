@@ -82,13 +82,11 @@ export default ({
     const otp_original = ref(null)
     const user_email = ref(null)
     const public_key = ref(null)
-    const verify = ref(null)
 
     return {
       otp_original,
       user_email,
       public_key,
-      verify,
       step
     }
   },
@@ -150,25 +148,37 @@ export default ({
       try {
         try {
           let _account_status = await window.$contract.methods.clients_new_pub_key(to_hex)
-          if(_account_status.decodedResult) {
+          if(_account_status.decodedResult == this.public_key) {
             this.$q.notify({
               message: 'Next step: Verify your updation.',
               color: 'secondary'
             })
-            this.verify = 'new'
+            window.$verify = 'new'
             this.step = variable
+          } else {
+            this.$q.notify({
+              message: 'Check your public address.',
+              color: 'warning'
+            })
+            return
           }
         } catch (e) {
           console.log('registered if')
           console.log(e)
           let account_status = await window.$contract.methods.clients_pub_key(to_hex)
-          if(account_status.decodedResult) {
+          if(account_status.decodedResult == this.public_key) {
             this.$q.notify({
               message: 'Next step: Verification.',
               color: 'secondary'
             })
-            this.verify = 'new'
+            window.$verify = 'new'
             this.step = variable
+          } else {
+            this.$q.notify({
+              message: 'Check your public address.',
+              color: 'warning'
+            })
+            return
           }
         }
       } catch(e) {
@@ -241,8 +251,8 @@ export default ({
 
       console.log("Fee seems to be paid, right ? : ")
       console.log(fee_status.decodedResult)
-      this.send_data_to_backend()
       this.$q.loading.hide()
+      this.send_data_to_backend()
     },
     send_data_to_backend() {
       this.$q.loading.show({
@@ -257,15 +267,19 @@ export default ({
           user_email: this.user_email,
           public_key: this.public_key
         }
-      }).then(function (response) {
+      }).then((response) => {
         // handle success
-        this.$q.loading.hide()
         console.log(response);
-      })
-      .catch(function (error) {
-        // handle error
         this.$q.loading.hide()
+      })
+      .catch((error) => {
+        // handle error
         console.log(error);
+        this.$q.notify({
+              message: 'b0001: ' + error.message,
+              color: 'pink-10'
+        })
+        this.$q.loading.hide()
       })
     },
     verify_user() {
