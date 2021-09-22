@@ -204,6 +204,9 @@ export default ({
       var fee_status = null
       try {
         fee_status = await window.$contract.methods.get_registration_fee_paid_or_not(window.$to_hex)
+        if(fee_status.decodedResult == false) {
+          throw new Error('Fee not paid!');
+        }
       } catch(e) {
         console.log(e)
         this.$q.notify({
