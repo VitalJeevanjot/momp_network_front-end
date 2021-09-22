@@ -56,8 +56,8 @@ export default ({
         let registration_fee = await window.$contract.methods.get_registration_fee()
         window.$registration_fee = registration_fee.decodedResult
         this.$q.notify({
-          message: 'Data Loaded!',
-          color: 'grey-10'
+          message: 'Data Loaded !',
+          color: 'brown-10'
         })
       } catch (e) {
         console.log(e)

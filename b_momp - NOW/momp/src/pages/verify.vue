@@ -118,7 +118,7 @@ export default ({
 
       if(!window.$registration_fee || !window.$base_fee) {
         this.$q.notify({
-          message: 'Loading Data! Try again in 10-20 seconds...',
+          message: 'Loading Data, Try again in 10-20 seconds...',
           color: 'secondary'
         })
         return
@@ -213,7 +213,7 @@ export default ({
           message: '0001: Paying registration fee',
           color: 'warning'
         })
-        if(e.message == 'Invocation failed: "Maps: Key does not exist"') {
+        if(e.message == 'Invocation failed: "Maps: Key does not exist"' || e.message == 'Fee not paid!') {
           this.$q.loading.show({
             message: 'Paying registration fee. Do not close this tab.',
             boxClass: 'bg-grey-2 text-grey-9',
@@ -254,7 +254,7 @@ export default ({
           } catch (e) {
             console.log(e)
             this.$q.notify({
-              message: '0005: Registration fee not paid!',
+              message: '0005: Registration fee not paid !',
               color: 'pink-10'
             })
           }
@@ -287,19 +287,18 @@ export default ({
         // handle success
         if(response.data.split(':')[0] == 'ok') {
           this.step = 3
-          setTimeout(() => {
             this.$q.notify({
-              message: 'Successfully Registered!',
-              color: 'amber-7'
+              progress: true,
+              message: 'Successfully Registered !',
+              color: 'amber-7',
+              timeout: 10000
             })
-          }, 10000)
-
-          setTimeout(() => {
             this.$q.notify({
-              message: 'The OTP is sent!. It is only allowed once per addition!',
+              progress: true,
+              message: 'The OTP is sent!. It is only allowed once per addition !',
               color: 'secondary'
             })
-          }, 15000)
+
         } else {
           this.$q.notify({
             message: response.data,
@@ -329,12 +328,12 @@ export default ({
       // }
       if(!this.user_email) {
         this.$q.notify({
-          message: 'Required Email & Public key! Add it on previous step!',
+          message: 'Required Email & Public key, Add it on previous step .',
           color: 'pink-10'
         })
       }
       this.$q.loading.show({
-        message: 'Verification is in process! Do not close this tab.',
+        message: 'Verification is in process! Do not close this tab .',
         boxClass: 'bg-grey-2 text-grey-9',
         spinnerColor: 'amber-7'
       })
@@ -350,19 +349,18 @@ export default ({
         }
 
         console.log("Verification status! : " + verification_status.decodedResult)
-        setTimeout(() => {
-          this.$q.notify({
-            progress: true,
-            message: 'Verification status: ' + verification_status.decodedResult,
-            color: 'amber-7'
-          })
-        }, 20000)
+        this.$q.notify({
+          progress: true,
+          message: 'Verification status: ' + verification_status.decodedResult,
+          color: 'amber-7',
+          timeout: 15000
+        })
         
       } catch (e) {
         console.log(e)
         if(e.message == "Cannot read properties of null (reading 'decodedResult')") {
           this.$q.notify({
-            message: 'v00098: Required all fields and step by step execution!',
+            message: 'v00098: Required all fields and step by step execution !',
             color: 'pink-10'
           })
         } else {
