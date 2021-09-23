@@ -140,7 +140,7 @@ export default ({
 
 
       this.$q.loading.show({
-        message: 'Checking account status. Do not close this tab.',
+        message: 'Checking account status. Do not close this tab .',
         boxClass: 'bg-grey-2 text-grey-9',
         spinnerColor: 'amber-7'
       })
@@ -149,20 +149,37 @@ export default ({
         try {
           let _account_status = await window.$contract.methods.clients_new_pub_key(window.$to_hex)
           if(_account_status.decodedResult == this.public_key) {
-            this.$q.notify({
-              message: 'Next step: Verify your updation.',
-              color: 'secondary'
+            this.$q.loading.show({
+              message: 'Checking verification status. Do not close this tab .',
+              boxClass: 'bg-grey-2 text-grey-9',
+              spinnerColor: 'amber-7'
             })
-            window.$verify = 'new'
-            this.step = variable
-
-            this.$q.loading.hide()
+            let _verification_status = await window.$contract.methods.isEditedVerifiedEmail(window.$to_hex)
+            if(_verification_status.decodedResult == false) {
+              this.$q.notify({
+                progress: true,
+                message: 'Next step: Verify your new public key .',
+                color: 'secondary',
+                timeout: 8000
+              })
+              window.$verify = 'update'
+              this.step = variable
+              this.$q.loading.hide()
+            } else if (_verification_status.decodedResult == true) {
+              this.$q.notify({
+                message: 'Already verified! Checking for remaining balance .',
+                color: 'secondary',
+                timeout: 7000
+              })
+              this.withdraw_amount()
+            }
             return
           } else {
-            window.$verify = 'new'
+            window.$verify = 'update'
             this.$q.notify({
               message: 'Updating your new public address in the smart contract.',
-              color: 'secondary'
+              color: 'secondary',
+              timeout: 8000
             })
           }
          
@@ -171,21 +188,39 @@ export default ({
           console.log(e)
           let account_status = await window.$contract.methods.clients_pub_key(window.$to_hex)
           if(account_status.decodedResult == this.public_key) {
-            this.$q.notify({
-              message: 'Next step: Verification.',
-              color: 'secondary'
+            this.$q.loading.show({
+              message: 'Checking verification status. Do not close this tab .',
+              boxClass: 'bg-grey-2 text-grey-9',
+              spinnerColor: 'amber-7'
             })
-            this.step = variable
+            let verification_status = await window.$contract.methods.isEditedVerifiedEmail(window.$to_hex)
+            if(verification_status.decodedResult == false) {
+              this.$q.notify({
+                progress: true,
+                message: 'Next step: Verification.',
+                color: 'secondary',
+                timeout: 7000
+              })
+              this.step = variable
+  
+              window.$verify = 'first'
+              this.$q.loading.hide()
+            } else if(verification_status.decodedResult == true) {
 
-            window.$verify = 'first'
-            this.$q.loading.hide()
+              this.$q.notify({
+                message: 'Already verified Details! Checking for remaining balance .',
+                color: 'secondary',
+                timeout: 7000
+              })
+              this.withdraw_amount()
+            }
             return
           } else {
             this.$q.notify({
               message: 'Updating your new public address in the smart contract.',
               color: 'secondary'
             })
-            window.$verify = 'new'
+            window.$verify = 'update'
           }
           
         }
@@ -226,7 +261,9 @@ export default ({
             console.log(e)
             this.$q.notify({
               message: '0003: ' + e.message,
-              color: 'pink-10'
+              color: 'pink-10',
+              progress: true,
+              timeout: 10000
             })
             this.$q.loading.hide()
             return
@@ -291,12 +328,13 @@ export default ({
               progress: true,
               message: 'Successfully Registered !',
               color: 'amber-7',
-              timeout: 10000
+              timeout: 30000
             })
             this.$q.notify({
               progress: true,
               message: 'The OTP is sent!. It is only allowed once per addition !',
-              color: 'secondary'
+              color: 'secondary',
+              timeout: 25000
             })
 
         } else {
@@ -326,10 +364,12 @@ export default ({
       // } catch (e) {
       //   console.log(e)
       // }
-      if(!this.user_email) {
+      if(!this.user_email || !window.$to_hex) {
         this.$q.notify({
-          message: 'Required Email & Public key, Add it on previous step .',
-          color: 'pink-10'
+          progress: true,
+          message: 'Required Email & Public key, Add it on previous step (Require step by step execution).',
+          color: 'pink-10',
+          timeout: 7000
         })
       }
       this.$q.loading.show({
@@ -339,7 +379,7 @@ export default ({
       })
       let verification_status = null
       try {
-        if(window.$verify == 'new') {
+        if(window.$verify == 'update') {
           console.log("2nd Time verification!")
           verification_status = await window.$contract.methods.verify_and_edit_email_with_otp(window.$to_hex, this.otp_original, {gasPrice: 2500000000})
         }
@@ -353,7 +393,7 @@ export default ({
           progress: true,
           message: 'Verification status: ' + verification_status.decodedResult,
           color: 'amber-7',
-          timeout: 15000
+          timeout: 35000
         })
         
       } catch (e) {
@@ -361,12 +401,16 @@ export default ({
         if(e.message == "Cannot read properties of null (reading 'decodedResult')") {
           this.$q.notify({
             message: 'v00098: Required all fields and step by step execution !',
-            color: 'pink-10'
+            color: 'pink-10',
+            progress: true,
+            timeout: 7000
           })
         } else {
           this.$q.notify({
             message: 'v00099: ' + e.message,
-            color: 'pink-10'
+            color: 'pink-10',
+            progress: true,
+            timeout: 10000
           })
         }
       }
@@ -374,6 +418,73 @@ export default ({
       return
     },
     async withdraw_amount() {
+      this.$q.loading.show({
+        message: 'Checking any remaining amoun in the contract. Do not close this tab .',
+        boxClass: 'bg-grey-2 text-grey-9',
+        spinnerColor: 'amber-7'
+      })
+
+      try {
+
+        let available_balance = await window.$contract.methods.clients_balance(window.$to_hex)
+        if(available_balance.decodedResult > 0) {
+          this.$q.notify({
+            message: 'Balance: ' + available_balance.decodedResult,
+            color: 'amber-7',
+            progress: true,
+            timeout: 6000
+          })
+          this.$q.loading.show({
+            message: 'Withdrawal to your verified public key, Balance: ' + available_balance.decodedResult,
+            boxClass: 'bg-grey-2 text-grey-9',
+            spinnerColor: 'amber-7'
+          })
+          try {
+            let withdrawal_status = await window.$contract.methods.clients_balance(window.$to_hex)
+            if(withdrawal_status.decodedResult == 0) {
+              this.$q.notify({
+                message: 'Withdrawal successful of all remaining balance !',
+                color: 'secondary',
+                progress: true,
+                timeout: 25000
+              })
+            } else {
+                this.$q.notify({
+                message: 'rb00010: Unknown status!',
+                color: 'pink-10',
+                progress: true,
+                timeout: 10000
+              })
+            }
+          } catch (e) {
+            console.log(e)
+            this.$q.notify({
+              message: 'rb00005: ' + e.message,
+              color: 'pink-10',
+              progress: true,
+              timeout: 10000
+            })
+          }
+          this.$q.loading.hide()
+        } else {
+          this.$q.notify({
+            message: 'No amount to withdraw !',
+            color: 'amber-7',
+            progress: true,
+            timeout: 6000
+          })
+        }
+      } catch (e) {
+        console.log(e)
+        this.$q.notify({
+          message: 'rb00001: ' + e.message,
+          color: 'pink-10',
+          progress: true,
+          timeout: 10000
+        })
+      }
+
+
 
     }
     
