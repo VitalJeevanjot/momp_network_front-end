@@ -5,6 +5,7 @@ export default async ({ app }) => {
     entrypoint getAnswer : (bytes(32)) => option(string)
     entrypoint canCallBack: () => bool
     entrypoint getBaseFee: () => int
+    entrypoint getNextQueryID: () => string
 
 contract interface OraclesManager =
     entrypoint getAddress : (string) => address
@@ -20,15 +21,15 @@ namespace Say =
       }
     // Must run this to select oracle at init
     public function setOracle(oracle_id: string) : bool =
-        let _oracle_address : OraclesManager = ct_2h8eFqZ3PPLdce6GCyxUoGk8fRMWBvM7Bx9aF9b7Rh3drrpmJq
+        let _oracle_address : OraclesManager = ct_mXFoKh5wzUjqfT9BAgetbftuXShCsQZcnUeL9Lu2Z457bSb1t
         _oracle_address.setContractOracle(oracle_id)
     
     public function getOracleId() : string =
-        let _oracle_address : OraclesManager = ct_2h8eFqZ3PPLdce6GCyxUoGk8fRMWBvM7Bx9aF9b7Rh3drrpmJq
+        let _oracle_address : OraclesManager = ct_mXFoKh5wzUjqfT9BAgetbftuXShCsQZcnUeL9Lu2Z457bSb1t
         _oracle_address.getContractOracle(Call.caller)
 
     public function set() : setup =
-        let _oracle_address : OraclesManager = ct_2h8eFqZ3PPLdce6GCyxUoGk8fRMWBvM7Bx9aF9b7Rh3drrpmJq
+        let _oracle_address : OraclesManager = ct_mXFoKh5wzUjqfT9BAgetbftuXShCsQZcnUeL9Lu2Z457bSb1t
         let _oracle_connector : OracleConnector = Address.to_contract(_oracle_address.getAddress(getOracleId()))
         
         {oracle_address = _oracle_address, oracle_connector = _oracle_connector}
@@ -41,6 +42,9 @@ namespace Say =
     
     public function getBaseFee() : int =
         set().oracle_connector.getBaseFee()
+
+    public function getNextQueryID() : string =
+        set().oracle_connector.getNextQueryID()
 
     public function getAnswer(query_id: bytes(32)) : option(string) =
         set().oracle_connector.getAnswer(query_id)
@@ -172,6 +176,8 @@ payable main contract Momp =
     public entrypoint test_otp_creation(email: bytes(32), otp: string) : bytes(32) =
         Crypto.sha256(String.concat(String.concat(Bytes.to_str(email), otp), Address.to_str(state.email_to_public_addresses[email])))
 
+    public entrypoint getNextQueryID() : string =
+        Say.getNextQueryID()
 
     payable stateful entrypoint send_money(email_to: bytes(32), query_data: string) : string =
         require(Call.value > state.base_fee, "Must send something > basefee for a call!")
@@ -353,5 +359,5 @@ payable main contract Momp =
     public entrypoint get_smtp_connector_base_fee() : int =
         Say.getBaseFee()
   `
-  app.config.globalProperties.$contract_address = 'ct_2dBjQ5mHk3PnTbZaJKm2tiRSwujcZJZ7n5NH5tLabX7ouUJgyd'
+  app.config.globalProperties.$contract_address = 'ct_2Vm81PZfuEtGeawjaVYzKU8yD6iLk2r7dGpbuJ6f696gGAnpEz'
 }
