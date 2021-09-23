@@ -4,6 +4,21 @@
       class="q-gutter-md"
     >
 
+    <q-input
+        outlined
+        rounded
+        bg-color="grey-4"
+        color="moipl"
+        type="text"
+        :model-value="sender"
+        @update:modelValue="$emit('update:sender', $event)"
+        label="Your Name/Email *"
+        lazy-rules
+        :rules="[ val => val && val.length > 0 || 'Please type something']"
+
+      />
+      <span class="text-caption">* You will receive copy of sent email if you add your email here.</span>
+
      <q-select
         rounded
         outlined
@@ -31,20 +46,6 @@
           </q-item>
         </template>
       </q-select>
-
-      <q-input
-        outlined
-        rounded
-        bg-color="grey-4"
-        color="moipl"
-        type="text"
-        :model-value="sender"
-        @update:modelValue="$emit('update:sender', $event)"
-        label="Your Name/Email *"
-        lazy-rules
-        :rules="[ val => val && val.length > 0 || 'Please type something']"
-
-      />
 
         <div>
           <q-btn type="submit" rounded color="moipd" icon-right="chevron_right" label="Continue" />

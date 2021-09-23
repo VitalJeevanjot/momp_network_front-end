@@ -35,7 +35,7 @@
 
         <div>
           <q-btn rounded @click="this.$emit('changeStep', 1)" icon="chevron_left" flat class="q-mr-sm" />
-          <q-btn type="submit" rounded color="moipd" icon-right="chevron_right" label="Continue" />
+          <q-btn type="submit" rounded color="moipd" icon-right="send" label="Send" />
         </div>
       </q-form>      
       
@@ -51,7 +51,7 @@ export default {
   },
   methods: {
     onSubmit () {
-        this.$emit('changeStep', 3)
+        this.$emit('sendMoney')
       }
   }
 }
