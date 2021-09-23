@@ -399,6 +399,9 @@ export default ({
           color: 'amber-7',
           timeout: 35000
         })
+        if(verification_status.decodedResult == true && window.$verify == 'first') {
+          this.withdraw_amount()
+        }
         
       } catch (e) {
         console.log(e)
@@ -423,7 +426,7 @@ export default ({
     },
     async withdraw_amount() {
       this.$q.loading.show({
-        message: 'Checking any remaining amoun in the contract. Do not close this tab .',
+        message: 'Checking any remaining amount in the contract. Do not close this tab .',
         boxClass: 'bg-grey-2 text-grey-9',
         spinnerColor: 'amber-7'
       })
