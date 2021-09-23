@@ -481,7 +481,7 @@ export default ({
         }
       } catch (e) {
         console.log(e)
-        if(e.message == "Maps: Key does not exist") {
+        if(e.message == 'Invocation failed: "Maps: Key does not exist"') {
           this.$q.notify({
             message: 'rb00001: No remaining balance !',
             color: 'amber-7',
