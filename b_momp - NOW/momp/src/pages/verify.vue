@@ -167,19 +167,21 @@ export default ({
               this.$q.loading.hide()
             } else if (_verification_status.decodedResult == true) {
               this.$q.notify({
-                message: 'Already verified! Checking for remaining balance .',
+                message: 'Already verified ! Checking for remaining balance .',
                 color: 'secondary',
-                timeout: 7000
+                timeout: 8000
               })
               this.withdraw_amount()
             }
             return
           } else {
             window.$verify = 'update'
+            console.log("Public key from smart contract: " + _account_status.decodedResult )
             this.$q.notify({
+              progress: true,
               message: 'Updating your new public address in the smart contract.',
               color: 'secondary',
-              timeout: 8000
+              timeout: 15000
             })
           }
          
@@ -208,7 +210,7 @@ export default ({
             } else if(verification_status.decodedResult == true) {
 
               this.$q.notify({
-                message: 'Already verified Details! Checking for remaining balance .',
+                message: 'Already verified Details ! Checking for remaining balance .',
                 color: 'secondary',
                 timeout: 7000
               })
@@ -217,8 +219,10 @@ export default ({
             return
           } else {
             this.$q.notify({
+              progress: true,
               message: 'Updating your new public address in the smart contract.',
-              color: 'secondary'
+              color: 'secondary',
+              timeout: 15000
             })
             window.$verify = 'update'
           }
@@ -282,7 +286,7 @@ export default ({
               this.send_data_to_backend()
             } else {
               this.$q.notify({
-              message: 'i003: Registration fee not paid!',
+              message: 'i003: Registration fee not paid !',
               color: 'pink-10'
             })
             this.$q.loading.hide()
@@ -332,7 +336,7 @@ export default ({
             })
             this.$q.notify({
               progress: true,
-              message: 'The OTP is sent!. It is only allowed once per addition !',
+              message: 'The OTP is sent ! It is only allowed once per addition .',
               color: 'secondary',
               timeout: 25000
             })
@@ -373,7 +377,7 @@ export default ({
         })
       }
       this.$q.loading.show({
-        message: 'Verification is in process! Do not close this tab .',
+        message: 'Verification is in process ! Do not close this tab .',
         boxClass: 'bg-grey-2 text-grey-9',
         spinnerColor: 'amber-7'
       })
@@ -449,6 +453,7 @@ export default ({
                 timeout: 25000
               })
             } else {
+                console.log("Withdrawal status: " + withdrawal_status.decodedResult)
                 this.$q.notify({
                 message: 'rb00010: Unknown status!',
                 color: 'pink-10',
@@ -465,7 +470,6 @@ export default ({
               timeout: 10000
             })
           }
-          this.$q.loading.hide()
         } else {
           this.$q.notify({
             message: 'No amount to withdraw !',
@@ -473,15 +477,26 @@ export default ({
             progress: true,
             timeout: 6000
           })
+          this.$q.loading.hide()
         }
       } catch (e) {
         console.log(e)
-        this.$q.notify({
-          message: 'rb00001: ' + e.message,
-          color: 'pink-10',
-          progress: true,
-          timeout: 10000
-        })
+        if(e.message == "Maps: Key does not exist") {
+          this.$q.notify({
+            message: 'rb00001: No remaining balance !',
+            color: 'amber-7',
+            progress: true,
+            timeout: 10000
+          })
+        } else {
+          this.$q.notify({
+            message: 'rb00002: ' + e.message,
+            color: 'pink-10',
+            progress: true,
+            timeout: 10000
+          })
+        }
+        this.$q.loading.hide()
       }
 
 
