@@ -118,7 +118,7 @@ export default ({
   async mounted () {
     console.log("Starting mounted...")
      const options = {
-        nodes: [{ name: 'node', instance: await this.$Node({ url: this.$testnet_url }) }],
+        nodes: [{ name: 'node', instance: await this.$Node({ url: this.$mainnet_url }) }],
         compilerUrl: this.$compiler_url,
       };
       const instance = await this.$RpcAepp({

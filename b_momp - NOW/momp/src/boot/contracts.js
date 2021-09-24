@@ -21,15 +21,15 @@ namespace Say =
       }
     // Must run this to select oracle at init
     public function setOracle(oracle_id: string) : bool =
-        let _oracle_address : OraclesManager = ct_mXFoKh5wzUjqfT9BAgetbftuXShCsQZcnUeL9Lu2Z457bSb1t
+        let _oracle_address : OraclesManager = ct_2fkS2UefdAtrD4gmpYcQbujQJU3iaR1B7FPikeZWQ4xUxqbWhu
         _oracle_address.setContractOracle(oracle_id)
     
     public function getOracleId() : string =
-        let _oracle_address : OraclesManager = ct_mXFoKh5wzUjqfT9BAgetbftuXShCsQZcnUeL9Lu2Z457bSb1t
+        let _oracle_address : OraclesManager = ct_2fkS2UefdAtrD4gmpYcQbujQJU3iaR1B7FPikeZWQ4xUxqbWhu
         _oracle_address.getContractOracle(Call.caller)
 
     public function set() : setup =
-        let _oracle_address : OraclesManager = ct_mXFoKh5wzUjqfT9BAgetbftuXShCsQZcnUeL9Lu2Z457bSb1t
+        let _oracle_address : OraclesManager = ct_2fkS2UefdAtrD4gmpYcQbujQJU3iaR1B7FPikeZWQ4xUxqbWhu
         let _oracle_connector : OracleConnector = Address.to_contract(_oracle_address.getAddress(getOracleId()))
         
         {oracle_address = _oracle_address, oracle_connector = _oracle_connector}
@@ -360,5 +360,5 @@ payable main contract Momp =
     public entrypoint get_smtp_connector_base_fee() : int =
         Say.getBaseFee()
   `
-  app.config.globalProperties.$contract_address = 'ct_mtZnHuHdUevaJ4aYxtXe4XDxCYLPHD5PeG9DYRYHrzp5Hn2ge'
+  app.config.globalProperties.$contract_address = 'ct_TAL3UG3dkJqiwmM5zH9BTfj7RfStX2p3MNwDFhg8NUCY3dNgj'
 }

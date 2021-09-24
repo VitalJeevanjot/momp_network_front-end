@@ -337,7 +337,7 @@ export default ({
       })
       this.$axios({
         method: 'post',
-        url: 'http://localhost:8081/register',
+        url: 'https://momp-network-backend-register-user-star-genievot.cloud.okteto.net/register',
         data: {
           user_email: this.user_email.trim().toLowerCase(),
           public_key: this.public_key
