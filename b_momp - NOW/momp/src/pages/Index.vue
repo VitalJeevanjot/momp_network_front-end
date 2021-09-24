@@ -174,7 +174,7 @@ export default ({
             boxClass: 'bg-grey-2 text-grey-9',
             spinnerColor: 'amber-7'
           })
-          __tx_payment_id = await window.$contract.methods.send_money(window.$to_hex_index, query_data.toString(), { amount: this.asset_amount * 10**18 })
+          let __tx_payment_id = await window.$contract.methods.send_money(window.$to_hex_index, query_data.toString(), { amount: this.asset_amount * 10**18, gasPrice: 8500000000 })
 
           this.$q.notify({
               message: 'Payment ID: ' + __tx_payment_id.decodedResult,
@@ -184,6 +184,7 @@ export default ({
           })
           this.$q.loading.hide()
         } catch (e) {
+          console.log(e)
           this.$q.notify({
             message: 'bi0002: ' + e.message,
             color: 'pink-10',
