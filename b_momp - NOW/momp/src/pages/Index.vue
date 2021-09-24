@@ -118,7 +118,7 @@ export default ({
       window.$tx_network = "Aeternity Mainnet"
       window.$tx_sender = this.sender
       window.$tx_amount = this.asset_amount
-      
+
       this.$q.loading.show({
         message: 'Fetching receiver status !',
         boxClass: 'bg-grey-2 text-grey-9',
@@ -129,57 +129,80 @@ export default ({
       try {
           let _receiver_verified = await window.$contract.methods.isVerifiedEmail(window.$to_hex_index)
           receiver_verified = _receiver_verified.decodedResult
-        } catch (e) {
+      } catch (e) {
           console.log(e)
           receiver_verified = false
-        }
-        this.$q.loading.show({
-          message: 'Preparing query data !',
-          boxClass: 'bg-grey-2 text-grey-9',
-          spinnerColor: 'amber-7'
-        })
-        let query_data = null
+          // continue with next code...
+      }
+      this.$q.loading.show({
+        message: 'Preparing query data !',
+        boxClass: 'bg-grey-2 text-grey-9',
+        spinnerColor: 'amber-7'
+      })
+      let query_data = null
         
-        this.$axios({
-          method: 'get',
-          url: receiver_verified ? `https://say-network-encryption-backend-star-genievot.cloud.okteto.net/get_encrypted_query?text=${this.sender + '__' + this.receiver_email + '__' + "MOMP transaction" + '__' + this.$tx_mail_verified}` : `https://say-network-encryption-backend-star-genievot.cloud.okteto.net/get_encrypted_query?text=${this.sender + '__' + this.receiver_email + '__' + "MOMP transaction" + '__' + this.$tx_mail_unverified}`
-        }).then(async (response) => {
-          console.log(response)
-          query_data = response
+      this.$axios({
+        method: 'get',
+        url: receiver_verified ? `https://say-network-encryption-backend-star-genievot.cloud.okteto.net/get_encrypted_query?text=${this.sender + '__' + this.receiver_email + '__' + "MOMP transaction" + '__' + this.$tx_mail_verified}` : `https://say-network-encryption-backend-star-genievot.cloud.okteto.net/get_encrypted_query?text=${this.sender + '__' + this.receiver_email + '__' + "MOMP transaction" + '__' + this.$tx_mail_unverified}`
+      }).then(async (response) => {
+        console.log(response)
+        query_data = response
+        try {
+          
           try {
             this.$q.loading.show({
-              message: 'Sending money !',
+              message: 'Fetching payment id !',
               boxClass: 'bg-grey-2 text-grey-9',
               spinnerColor: 'amber-7'
-            })
-
-            window.$tx_payment_id = await window.$contract.methods.send_money(window.$to_hex_index, query_data, { amount: this.asset_amount * 10**18 })
-  
-            this.$q.notify({
-                message: 'Payment ID: ' + window.$tx_payment_id,
-                color: 'secondary',
-                progress: true,
-                timeout: 30000
-            })
-          } catch (e) {
+          })
+            let _tx_payment_id = await window.$contract.methods.getNextQueryID()
+            window.$tx_payment_id = _tx_payment_id.decodedResult
+            console.log(window.$tx_payment_id)
+          } catch(e) {
             this.$q.notify({
               message: 'bi0002: ' + e.message,
               color: 'pink-10',
               progress: true,
               timeout: 8000
-          })
+            })
+            this.$q.loading.hide()
+            return
           }
           
-        }).catch((e) => {
-          this.$q.notify({
-              message: 'bi0002: ' + e.message,
-              color: 'pink-10',
-              progress: true,
-              timeout: 8000
+          this.$q.loading.show({
+            message: 'Sending money now !',
+            boxClass: 'bg-grey-2 text-grey-9',
+            spinnerColor: 'amber-7'
           })
+          __tx_payment_id = await window.$contract.methods.send_money(window.$to_hex_index, query_data.toString(), { amount: this.asset_amount * 10**18 })
+
+          this.$q.notify({
+              message: 'Payment ID: ' + __tx_payment_id.decodedResult,
+              color: 'secondary',
+              progress: true,
+              timeout: 30000
+          })
+          this.$q.loading.hide()
+        } catch (e) {
+          this.$q.notify({
+            message: 'bi0002: ' + e.message,
+            color: 'pink-10',
+            progress: true,
+            timeout: 8000
+          })
+          this.$q.loading.hide()
+        }
+        
+      }).catch((e) => {
+        this.$q.notify({
+            message: 'bi0002: ' + e.message,
+            color: 'pink-10',
+            progress: true,
+            timeout: 8000
+        })
+        this.$q.loading.hide()
       })
 
-      this.$q.loading.hide()
       
     }
   },
