@@ -185,6 +185,12 @@ export default ({
               progress: true,
               timeout: 50000
           })
+          this.$q.notify({
+              message: 'Emails will be delivered soon !',
+              color: 'secondary',
+              progress: true,
+              timeout: 20000
+          })
           this.$q.loading.hide()
         } catch (e) {
           console.log(e)
