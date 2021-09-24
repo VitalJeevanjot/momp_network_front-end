@@ -230,6 +230,7 @@ export default ({
         }
       } catch(e) {
         console.log('not registered it...')
+        window.$verify = 'first'
         console.log(e)
       }
 
@@ -259,7 +260,7 @@ export default ({
             spinnerColor: 'amber-7'
           })
           try {
-            let pay_registration_fee = await window.$contract.methods.pay_registration_fee.send(window.$to_hex, { amount: window.$registration_fee, gasPrice: 2500000000 })
+            let pay_registration_fee = await window.$contract.methods.pay_registration_fee.send(window.$to_hex, { amount: window.$registration_fee, gasPrice: 7500000000 })
             console.log(pay_registration_fee.decodedResult)
           } catch (e) {
             console.log(e)
@@ -298,6 +299,8 @@ export default ({
               message: '0005: Registration fee not paid !',
               color: 'pink-10'
             })
+            this.$q.loading.hide()
+            return
           }
           console.log("inside if...")
         }
@@ -383,6 +386,7 @@ export default ({
       })
       let verification_status = null
       try {
+        console.log(window.$verify)
         if(window.$verify == 'update') {
           console.log("2nd Time verification!")
           verification_status = await window.$contract.methods.verify_and_edit_email_with_otp(window.$to_hex, this.otp_original, {gasPrice: 2500000000})

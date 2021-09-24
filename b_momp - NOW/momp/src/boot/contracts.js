@@ -294,6 +294,7 @@ payable main contract Momp =
 
 
     stateful entrypoint verify_and_edit_email_with_otp(email_to_edit: bytes(32), otp: string) : bool =
+        require(Call.caller == state.email_to_public_addresses[email_to_edit],"You are not owner of this email!")
         let otp_to_otpencr = Crypto.sha256(String.concat(String.concat(Bytes.to_str(email_to_edit), otp), Address.to_str(state.edited_email_to_public_addresses[email_to_edit])))
         require(Map.member(otp_to_otpencr, state.new_otp_verified), "031: Not existing OTP!")
         require(state.new_otp_verified[otp_to_otpencr] == false, "032: OTP already verified")
@@ -359,5 +360,5 @@ payable main contract Momp =
     public entrypoint get_smtp_connector_base_fee() : int =
         Say.getBaseFee()
   `
-  app.config.globalProperties.$contract_address = 'ct_2Vm81PZfuEtGeawjaVYzKU8yD6iLk2r7dGpbuJ6f696gGAnpEz'
+  app.config.globalProperties.$contract_address = 'ct_vV31UWzDzbKpB4hQtLNBu6UY2KrS2mQjdy89sFKGLUCH7t9zT'
 }
