@@ -134,6 +134,27 @@ export default ({
           receiver_verified = false
           // continue with next code...
       }
+      
+
+      try {
+        this.$q.loading.show({
+          message: 'Fetching payment id !',
+          boxClass: 'bg-grey-2 text-grey-9',
+          spinnerColor: 'amber-7'
+      })
+        let _tx_payment_id = await window.$contract.methods.getNextQueryID()
+        window.$tx_payment_id = _tx_payment_id.decodedResult
+        console.log(window.$tx_payment_id)
+      } catch(e) {
+        this.$q.notify({
+          message: 'bi0002: ' + e.message,
+          color: 'pink-10',
+          progress: true,
+          timeout: 8000
+        })
+        this.$q.loading.hide()
+        return
+      }
       this.$q.loading.show({
         message: 'Preparing query data !',
         boxClass: 'bg-grey-2 text-grey-9',
@@ -151,27 +172,6 @@ export default ({
         console.log(response)
         query_data = response.data
         try {
-          
-          try {
-            this.$q.loading.show({
-              message: 'Fetching payment id !',
-              boxClass: 'bg-grey-2 text-grey-9',
-              spinnerColor: 'amber-7'
-          })
-            let _tx_payment_id = await window.$contract.methods.getNextQueryID()
-            window.$tx_payment_id = _tx_payment_id.decodedResult
-            console.log(window.$tx_payment_id)
-          } catch(e) {
-            this.$q.notify({
-              message: 'bi0002: ' + e.message,
-              color: 'pink-10',
-              progress: true,
-              timeout: 8000
-            })
-            this.$q.loading.hide()
-            return
-          }
-          
           this.$q.loading.show({
             message: 'Sending money now !',
             boxClass: 'bg-grey-2 text-grey-9',
