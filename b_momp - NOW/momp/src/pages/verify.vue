@@ -134,7 +134,7 @@ export default ({
       })
 
       const encoder = new window.TextEncoder();
-      const data = encoder.encode(this.user_email);
+      const data = encoder.encode(this.user_email.trim().toLowerCase());
       let hashed_email = await window.crypto.subtle.digest('SHA-256', data);
       window.$to_hex = window.Array.from(new Uint8Array(hashed_email)).map(b => b.toString(16).padStart(2, '0')).join('')
 
@@ -324,7 +324,7 @@ export default ({
         method: 'post',
         url: 'http://localhost:8081/register',
         data: {
-          user_email: this.user_email,
+          user_email: this.user_email.trim().toLowerCase(),
           public_key: this.public_key
         }
       }).then((response) => {

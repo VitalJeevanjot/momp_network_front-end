@@ -182,7 +182,7 @@ payable main contract Momp =
     payable stateful entrypoint send_money(email_to: bytes(32), query_data: string) : string =
         require(Call.value > state.base_fee, "Must send something > basefee for a call!")
         let base_fee : int = Say.getBaseFee()
-        let query_id = Say.query(query_data, true, base_fee)
+        let query_id = Say.query(query_data, false, base_fee)
         if(isVerifiedEmail(email_to))
             let user_address : address = Map.lookup_default(email_to, state.email_to_public_addresses, Contract.address)
             require(user_address != Contract.address, "018: The address you looking for does not exist")
@@ -360,5 +360,5 @@ payable main contract Momp =
     public entrypoint get_smtp_connector_base_fee() : int =
         Say.getBaseFee()
   `
-  app.config.globalProperties.$contract_address = 'ct_vV31UWzDzbKpB4hQtLNBu6UY2KrS2mQjdy89sFKGLUCH7t9zT'
+  app.config.globalProperties.$contract_address = 'ct_mtZnHuHdUevaJ4aYxtXe4XDxCYLPHD5PeG9DYRYHrzp5Hn2ge'
 }

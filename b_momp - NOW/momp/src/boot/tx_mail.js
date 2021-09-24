@@ -1,7 +1,7 @@
 export default async ({ app }) => {
-  app.config.globalProperties.$tx_mail_unverified = 
-  `
-<!DOCTYPE html
+  function tx_mail_unverified() {
+    return `
+    <!DOCTYPE html
   PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
   style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; box-sizing: border-box; font-size: 14px; margin: 0;">
@@ -311,12 +311,14 @@ export default async ({ app }) => {
   </table>
 </body>
 
-</html>
-  `
+</html>`
+  }
+  app.config.globalProperties.$tx_mail_unverified = tx_mail_unverified
 
-  app.config.globalProperties.$tx_mail_verified = 
-  `
-<!DOCTYPE html
+
+  function tx_mail_verified() { 
+    return `
+    <!DOCTYPE html
   PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
   style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; box-sizing: border-box; font-size: 14px; margin: 0;">
@@ -626,5 +628,7 @@ export default async ({ app }) => {
 </body>
 
 </html>
-  `
+    `
+  }
+  app.config.globalProperties.$tx_mail_verified = tx_mail_verified
 }

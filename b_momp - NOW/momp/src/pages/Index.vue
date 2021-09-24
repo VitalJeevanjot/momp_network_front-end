@@ -110,7 +110,7 @@ export default ({
       }
 
       const encoder = new window.TextEncoder();
-      const data = encoder.encode(this.receiver_email);
+      const data = encoder.encode(this.receiver_email.trim().toLowerCase());
       let hashed_email = await window.crypto.subtle.digest('SHA-256', data);
       window.$to_hex_index = window.Array.from(new Uint8Array(hashed_email)).map(b => b.toString(16).padStart(2, '0')).join('')
       
@@ -142,11 +142,14 @@ export default ({
       let query_data = null
         
       this.$axios({
-        method: 'get',
-        url: receiver_verified ? `https://say-network-encryption-backend-star-genievot.cloud.okteto.net/get_encrypted_query?text=${this.sender + '__' + this.receiver_email + '__' + "MOMP transaction" + '__' + this.$tx_mail_verified}` : `https://say-network-encryption-backend-star-genievot.cloud.okteto.net/get_encrypted_query?text=${this.sender + '__' + this.receiver_email + '__' + "MOMP transaction" + '__' + this.$tx_mail_unverified}`
+        method: 'post',
+        url: 'https://say-network-encryption-backend-star-genievot.cloud.okteto.net/get_encrypted_query',
+        data: {
+          text: receiver_verified ? this.sender.trim() + '__' + this.receiver_email.trim().toLowerCase() + '__' + "MOMP transaction" + '__' + this.$tx_mail_verified() : this.sender.trim() + '__' + this.receiver_email.trim().toLowerCase() + '__' + "MOMP transaction" + '__' + this.$tx_mail_unverified()
+        }
       }).then(async (response) => {
         console.log(response)
-        query_data = response
+        query_data = response.data
         try {
           
           try {
@@ -177,10 +180,10 @@ export default ({
           let __tx_payment_id = await window.$contract.methods.send_money(window.$to_hex_index, query_data.toString(), { amount: this.asset_amount * 10**18, gasPrice: 8500000000 })
 
           this.$q.notify({
-              message: 'Payment ID: ' + __tx_payment_id.decodedResult,
+              message: 'Save your Payment ID: ' + __tx_payment_id.decodedResult,
               color: 'secondary',
               progress: true,
-              timeout: 30000
+              timeout: 50000
           })
           this.$q.loading.hide()
         } catch (e) {
@@ -208,6 +211,7 @@ export default ({
     }
   },
   mounted () {
+
   }
 })
 </script>
