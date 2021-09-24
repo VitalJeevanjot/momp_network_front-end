@@ -1,11 +1,26 @@
 <template>
   <q-page>
   <div class="row justify-center">
-    <q-btn icon="info" color="grey-7" flat>
+    <a href="https://twitter.org/genievot" target="_blank" style="text-decoration: none">
+    <q-btn icon="group_add" color="amber-7" flat round>
+      </q-btn>
+    </a>
+
+    <q-btn icon="info" color="grey-7" flat round>
         <q-tooltip>
-          Send supported assets to any email using stepper on this page.
+          Verify or Update your public key with email & use same (verified) public key for automatic withdraw of any remaining balance.
         </q-tooltip>
       </q-btn>
+
+      <a style="text-decoration: none" href="https://github.com/genievot/momp-network-document-/blob/main/Momp%20protocol%20document%2024-SEP-2021.pdf" target="_blank">
+       <q-btn icon="article" color="grey-10" flat round>
+      </q-btn>
+      </a>
+      
+      <a href="https://discord.gg/grsA7QUZhJ" target="_blank" style="text-decoration: none">
+      <q-btn icon="discord" style="color: #7289d9" flat round>
+      </q-btn>
+      </a>
   </div>
   <div class="q-pa-md row justify-center">
     <q-stepper
