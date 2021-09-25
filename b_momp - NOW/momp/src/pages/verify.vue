@@ -466,7 +466,7 @@ export default ({
             spinnerColor: 'amber-7'
           })
           try {
-            let withdrawal_status = await window.$contract.methods.clients_balance(window.$to_hex)
+            let withdrawal_status = await window.$contract.methods.clients_withdraw(window.$to_hex)
             if(withdrawal_status.decodedResult == 0) {
               this.$q.notify({
                 message: 'Withdrawal successful of all remaining balance !',
