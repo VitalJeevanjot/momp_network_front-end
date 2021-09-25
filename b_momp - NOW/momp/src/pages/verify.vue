@@ -492,6 +492,7 @@ export default ({
               timeout: 10000
             })
           }
+          this.$q.loading.hide()
         } else {
           this.$q.notify({
             message: 'No amount to withdraw !',
