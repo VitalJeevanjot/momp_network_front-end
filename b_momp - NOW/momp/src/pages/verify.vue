@@ -270,7 +270,7 @@ export default ({
         })
         if(e.message == 'Invocation failed: "Maps: Key does not exist"' || e.message == 'Fee not paid!') {
           this.$q.loading.show({
-            message: 'Paying registration fee. Do not close this tab.',
+            message: 'Paying registration fee ' + window.$registration_fee / (10 ** 18) + ' AE. Do not close this tab.',
             boxClass: 'bg-grey-2 text-grey-9',
             spinnerColor: 'amber-7'
           })

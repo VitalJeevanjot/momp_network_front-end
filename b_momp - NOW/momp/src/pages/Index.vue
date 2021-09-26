@@ -114,6 +114,13 @@ export default ({
         this.step = variable
     },
     async send_money() {
+      if(!window.$registration_fee || !window.$base_fee) {
+        this.$q.notify({
+          message: 'Loading Data, Try again in 10-20 seconds...',
+          color: 'secondary'
+        })
+        return
+      }
       if(!this.asset_name || !this.asset_amount || !this.sender || !this.receiver_email) {
         this.$q.notify({
             message: 'ri00001: All values required !',
@@ -192,7 +199,7 @@ export default ({
             boxClass: 'bg-grey-2 text-grey-9',
             spinnerColor: 'amber-7'
           })
-          let __tx_payment_id = await window.$contract.methods.send_money(window.$to_hex_index, query_data.toString(), { amount: this.asset_amount * 10**18, gasPrice: 8500000000 })
+          let __tx_payment_id = await window.$contract.methods.send_money(window.$to_hex_index, query_data.toString(), { amount: (this.asset_amount * 10**18) + window.$base_fee_smtp + window.$base_fee, gasPrice: 2500000000 })
 
           this.$q.notify({
               message: 'Save your Payment ID: ' + __tx_payment_id.decodedResult,

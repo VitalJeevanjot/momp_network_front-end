@@ -53,6 +53,8 @@ export default ({
       try {
         let base_fee = await window.$contract.methods.get_base_fee()
         window.$base_fee = base_fee.decodedResult
+        let base_fee_smtp = await window.$contract.methods.get_smtp_connector_base_fee()
+        window.$base_fee_smtp = base_fee_smtp.decodedResult
         let registration_fee = await window.$contract.methods.get_registration_fee()
         window.$registration_fee = registration_fee.decodedResult
         this.$q.notify({

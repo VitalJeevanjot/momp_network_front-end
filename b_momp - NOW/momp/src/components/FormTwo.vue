@@ -23,6 +23,8 @@
         bg-color="grey-4"
         color="moipl"
         type="number"
+        step="any"
+        min="0"
         :model-value="asset_amount"
         @update:modelValue="$emit('update:asset_amount', $event)"
         label="Enter amount in AE *"
