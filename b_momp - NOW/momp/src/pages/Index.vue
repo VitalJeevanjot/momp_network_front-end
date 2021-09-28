@@ -5,12 +5,13 @@
     <q-btn icon="group_add" color="amber-7" flat round>
       </q-btn>
     </a>
-
+    <a href="https://dev.to/genievot/how-to-send-money-on-emails-using-momp-network-57m6" target="_blank" style="text-decoration: none">
     <q-btn icon="info" color="grey-7" flat round>
         <q-tooltip>
           Use stepper to send supported assets to any email on this page.
         </q-tooltip>
       </q-btn>
+      </a>
 
       <a style="text-decoration: none" href="https://github.com/genievot/momp-network-document-/blob/main/Momp%20protocol%20document%2024-SEP-2021.pdf" target="_blank">
        <q-btn icon="article" color="grey-10" flat round>
