@@ -115,6 +115,17 @@ export default ({
         this.step = variable
     },
     async send_money() {
+      if(!window.$address) {
+        this.$q.notify({
+          message: 'Required: Wallet approval',
+          color: 'pink-10'
+        })
+        this.$q.notify({
+          message: 'Try Again: Reload page or check wallet extension.',
+          color: 'pink-10'
+        })
+        return
+      }
       if(!window.$registration_fee || !window.$base_fee) {
         this.$q.notify({
           message: 'Loading Data, Try again in 10-20 seconds...',
