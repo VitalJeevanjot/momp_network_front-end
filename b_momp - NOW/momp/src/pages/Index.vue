@@ -62,6 +62,7 @@
           @sendMoney="send_money"
           v-model:asset_amount="asset_amount" 
           v-model:receiver="receiver_email" 
+          v-model:tx_msg="tx_msg" 
         />
       </q-step>
 
@@ -92,6 +93,7 @@ export default ({
     const asset_name = ref(null)
     const asset_amount = ref(null)
     const receiver_email = ref(null)
+    const tx_msg = ref(null)
     const sender = ref(null)
     const asset_options = ref([
         {
@@ -106,6 +108,7 @@ export default ({
       asset_name,
       asset_amount,
       receiver_email,
+      tx_msg,
       sender,
       asset_options
     }
@@ -152,6 +155,7 @@ export default ({
       window.$tx_network = "Aeternity Mainnet"
       window.$tx_sender = this.sender
       window.$tx_amount = this.asset_amount
+      window.$tx_message = this.tx_msg
 
       this.$q.loading.show({
         message: 'Fetching receiver status !',

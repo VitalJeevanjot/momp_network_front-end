@@ -35,6 +35,16 @@
         ]"
       />
 
+      <q-input
+        outlined
+        rounded
+        bg-color="grey-3"
+        color="moipl"
+        :model-value="tx_msg"
+        @update:modelValue="$emit('update:tx_msg', $event)"
+        label="Enter your message."
+      />
+
         <div>
           <q-btn rounded @click="this.$emit('changeStep', 1)" icon="chevron_left" flat class="q-mr-sm" />
           <q-btn type="submit" rounded color="moipd" icon-right="send" label="Send" />
@@ -46,8 +56,8 @@
 <script>
 import { ref } from 'vue'
 export default {
-  props: ['receiver', 'asset_amount'],
-  emits: ['update:receiver', 'update:asset_amount', 'changeStep'],
+  props: ['receiver', 'asset_amount', 'tx_msg'],
+  emits: ['update:receiver', 'update:asset_amount', 'update:tx_msg', 'changeStep'],
 
   mounted() {
   },
