@@ -222,8 +222,9 @@ payable main contract Momp =
         require(state.payment_id_expiry[payment_id][Call.caller] < Chain.timestamp, "Transaction not expired yet!")
         let get_receiver = state.payment_id_to_receiver[payment_id]
         put(state{payment_id_refund_claimed[payment_id] = true})
-        Chain.spend(Call.caller, state.payment_id_to_sender_and_amount[payment_id][Call.caller])
         put(state{amount_not_withdrawn[get_receiver] @ c = c - (state.payment_id_to_sender_and_amount[payment_id][Call.caller]) })
+        require(state.amount_not_withdrawn[get_receiver] > 0, "Cannot claim funds from 0 balance!")
+        Chain.spend(Call.caller, state.payment_id_to_sender_and_amount[payment_id][Call.caller])
         put(state{payment_id_to_sender_and_amount[payment_id] = {[Call.caller] = 0}})
         "Amount claimed"
 
@@ -360,5 +361,5 @@ payable main contract Momp =
     public entrypoint get_smtp_connector_base_fee() : int =
         Say.getBaseFee()
   `
-  app.config.globalProperties.$contract_address = 'ct_TAL3UG3dkJqiwmM5zH9BTfj7RfStX2p3MNwDFhg8NUCY3dNgj'
+  app.config.globalProperties.$contract_address = 'ct_2uJthb5s1D8c8F8ZYMAZ6LYGWno5ubFnrmkkHLE1FBzN3JruQw'
 }
