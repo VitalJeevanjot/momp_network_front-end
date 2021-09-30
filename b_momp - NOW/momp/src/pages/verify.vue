@@ -371,10 +371,10 @@ export default ({
       .catch((error) => {
         // handle error
         console.log(error);
-        this.$q.notify({
-              message: 'b0001: ' + error.message,
-              color: 'pink-10'
-        })
+        // this.$q.notify({
+        //       message: 'b0001: ' + error.message,
+        //       color: 'pink-10'
+        // })
         this.$q.loading.hide()
       })
     },
