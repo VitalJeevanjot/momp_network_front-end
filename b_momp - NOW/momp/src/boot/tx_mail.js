@@ -520,7 +520,7 @@ export default async ({ app }) => {
                             <a href="https://momp.network/#/verify" class="button" style="background-color: #4A171E !important;">
                               VERIFY
                             </a>
-                            <p style="color: #525252; ">*You need to verify your email from momp.network to get your assets inside your wallet. </p>
+                            <p style="color: #525252; ">*You need to verify your email from momp.network to withdraw your assets inside your wallet. This amount can be claimed back by the sender in 15 days if not withdrawn by receiver.</p>
                           </td>
                         </tr> -->
                         <tr
