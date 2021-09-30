@@ -320,8 +320,8 @@ export default ({
           }
           console.log("inside if...")
         }
-        this.$q.loading.hide()
-        this.send_data_to_backend()
+        // this.$q.loading.hide()
+        // this.send_data_to_backend()
         return
       }
 
