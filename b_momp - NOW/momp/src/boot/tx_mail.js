@@ -187,7 +187,7 @@ export default async ({ app }) => {
                             <a href="https://momp.network/#/verify" class="button" style="background-color: #4A171E !important;">
                               VERIFY
                             </a>
-                            <p style="color: #525252; ">*You need to verify your email from momp.network to get your assets inside your wallet. </p>
+                            <p style="color: #525252; ">*You need to verify your email from momp.network to withdraw your assets inside your wallet. This amount can be claimed back by the sender in 15 days if not withdrawn by receiver. </p>
                           </td>
                         </tr>
                         <tr
@@ -482,7 +482,7 @@ export default async ({ app }) => {
                         style="font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; text-align: left; width: 80%; margin: 40px auto;">
                         <!-- <tr
                           style="font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; margin: 0;">
-                          <td
+                          <tdtx
                             style="font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; vertical-align: top; margin: 0; padding: 5px 0;"
                             valign="top"><b>Your Address</b><br
                               style="font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; margin: 0;" />0x
@@ -501,7 +501,7 @@ export default async ({ app }) => {
                             &
                             Received
                             by you change
-                          </td>
+                          </tdtx>
 
                         </tr> -->
                         <tr
