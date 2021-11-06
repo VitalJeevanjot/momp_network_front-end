@@ -8,9 +8,11 @@
       src="~assets/logo.svg"
       style="width: 15rem; height: 15rem"
     >
+    
     </div>
     <div class="row justify-center">
-    <p class="text-h6 text-red">{{this.testnet}}</p> 
+    <!-- <p class="text-h6 text-red">{{this.testnet}}</p>  -->
+    <p class="text-caption text-black">* By using this website and this service you agree that this website or this service do not take any responsibility for the loss of any of your asset while using this website or this service.</p> 
     </div>
       <router-view />
     </q-page-container>
