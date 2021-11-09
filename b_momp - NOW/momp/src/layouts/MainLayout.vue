@@ -12,7 +12,7 @@
     </div>
     <div class="row justify-center">
     <!-- <p class="text-h6 text-red">{{this.testnet}}</p>  -->
-    <p class="text-caption text-black">* By using this website and this service you agree that this website or this service or the owner of this website and service do not take any responsibility for the loss of any of your asset occured by any operation now or later while using this website or this service.</p> 
+    <p class="text-caption text-black text-center" style="max-width: 600px; width: 80vw">* By using this website and this service you agree that this website or this service or the owners of this website or service do not take any responsibility for the loss of any of your asset occured by any operation now or later while using this website or this service.</p> 
     </div>
       <router-view />
     </q-page-container>
