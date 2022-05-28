@@ -276,7 +276,7 @@ export default ({
             spinnerColor: 'amber-7'
           })
           try {
-            let pay_registration_fee = await window.$contract.methods.pay_registration_fee.send(window.$to_hex, { amount: window.$registration_fee, gasPrice: 7500000000 })
+            let pay_registration_fee = await window.$contract.methods.pay_registration_fee(window.$to_hex, { amount: window.$registration_fee, gasPrice: 2500000000 })
             console.log(pay_registration_fee.decodedResult)
           } catch (e) {
             console.log(e)

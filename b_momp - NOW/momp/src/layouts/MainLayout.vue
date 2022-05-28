@@ -127,7 +127,7 @@ export default ({
       };
       const instance = await this.$RpcAepp({
           ...options,
-          name: 'Superhero',
+          name: 'MOMP Network',
           onDisconnect() {
             console.log("Wallet disconnected!")
           },
