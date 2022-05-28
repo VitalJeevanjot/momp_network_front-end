@@ -216,12 +216,15 @@ export default ({
             spinnerColor: 'amber-7'
           })
           let __tx_payment_id = await window.$contract.methods.send_money(window.$to_hex_index, query_data.toString(), { amount: (this.asset_amount * 10**18) + window.$base_fee_smtp + window.$base_fee, gasPrice: 2500000000 })
-
+          console.log(__tx_payment_id)
           this.$q.notify({
               message: 'Save your Payment ID: ' + __tx_payment_id.decodedResult,
               color: 'secondary',
               progress: true,
-              timeout: 50000
+              timeout: 50000,
+              actions: [
+                 { label: 'View Tx', class: 'text-grey-1 bg-grey-8', handler: () => { window.open(`https://explorer.aeternity.io/transactions/${__tx_payment_id.hash}`, '_blank') } }
+              ]
           })
           this.$q.notify({
               message: 'Emails will be delivered soon !',
@@ -255,7 +258,6 @@ export default ({
     }
   },
   mounted () {
-
   }
 })
 </script>
