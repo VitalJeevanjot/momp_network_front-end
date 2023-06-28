@@ -338,7 +338,7 @@ export default ({
       })
       this.$axios({
         method: 'post',
-        url: 'https://api.momp.network/register',
+        url: 'https://api.momp.network/api/register',
         data: {
           user_email: this.user_email.trim().toLowerCase(),
           public_key: this.public_key

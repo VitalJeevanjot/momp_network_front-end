@@ -4,12 +4,13 @@
     <q-page-container>
       <div class="row justify-center">
       <img
-      alt="Quasar logo"
-      src="~assets/logo.svg"
-      style="width: 15rem; height: 15rem"
-    >
-    
-    </div>
+        alt="Momp Logo by Jeevanjot Singh Vital"
+        src="~assets/logo.svg"
+        style=" width: 15rem; height: 15rem; object-fit: cover; margin: -80px -50px -40px -50px; "
+        >
+      </div>
+
+
     <div class="row justify-center">
     <!-- <p class="text-h6 text-red">{{this.testnet}}</p>  -->
     <p class="text-caption text-black text-center" style="max-width: 600px; width: 80vw">* By using this website and this service you agree that this website or this service or the owners of this website or service do not take any responsibility for the loss of any of your asset occured by any operation now or later while using this website or this service.</p> 
